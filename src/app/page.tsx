@@ -10,7 +10,8 @@ export default function HomePage() {
   const router = useRouter();
 
   useEffect(() => {
-    if (isLoading) return;
+    // 等待 profile 完全加载后再跳转，避免竞态条件
+    if (isLoading || !profile) return;
     // 如果已登录，自动跳转到对应的门户
     if (isAuthenticated) {
       if (isAdmin) {
