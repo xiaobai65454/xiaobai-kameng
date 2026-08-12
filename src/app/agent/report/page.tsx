@@ -143,7 +143,7 @@ export default function ManualReportPage() {
 
   if (submitted) {
     return (
-      <div className="min-h-screen bg-[#f5f5f5] flex flex-col">
+      <div className="flex flex-col">
         <div className="bg-white sticky top-0 z-10 border-b border-gray-100">
           <div className="flex items-center h-12 px-4">
             <button onClick={() => router.push('/agent')} className="p-1">
@@ -182,19 +182,14 @@ export default function ManualReportPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f5f5f5] pb-20">
-      {/* Header */}
-      <div className="bg-white sticky top-0 z-10 border-b border-gray-100">
-        <div className="flex items-center h-12 px-4">
-          <button onClick={() => router.back()} className="p-1">
-            <ArrowLeft className="h-5 w-5 text-[#333]" />
-          </button>
-          <h1 className="flex-1 text-center text-base font-medium text-[#333]">号卡报单</h1>
-          <div className="w-6" />
-        </div>
+    <div className="space-y-5">
+      {/* Page Header */}
+      <div>
+        <h1 className="text-xl font-semibold text-[#000]">号卡报单</h1>
+        <p className="text-sm text-[#999] mt-1">提交线下号卡订单信息</p>
       </div>
 
-      <div className="px-4 py-3 space-y-3">
+      <div className="space-y-3">
         {/* 选择号卡商品 */}
         <Card className="bg-white p-4 border-0 shadow-[0_0_20px_rgba(0,0,0,0.05)] rounded-lg">
           <Label className="text-sm font-medium text-[#333] mb-2 block">选择号卡商品 <span className="text-red-500">*</span></Label>
@@ -277,10 +272,10 @@ export default function ManualReportPage() {
         </Card>
       </div>
 
-      {/* 底部固定提交按钮 */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 p-4 pb-safe">
+      {/* 提交按钮 */}
+      <div className="mt-6">
         <Button
-          className="w-full h-11 rounded-full bg-[#0d6efd] hover:bg-[#0b5ed7] text-white text-base font-medium"
+          className="w-full h-11 rounded-lg bg-[#1677FF] hover:bg-[#185FA5] text-white text-base font-medium"
           onClick={handleSubmit}
           disabled={submitting}
         >
