@@ -14,14 +14,17 @@ import {
   ChevronRight,
   Copy,
   CheckCircle2,
-  ShoppingCart,
+  ShoppingBag,
+  Link2,
   Users,
 } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import Link from 'next/link';
 
 export default function ProfilePage() {
-  const { profile, logout, getAuthHeaders } = useAuth();
+  const { profile, logout } = useAuth();
   const router = useRouter();
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
 
@@ -36,151 +39,157 @@ export default function ProfilePage() {
     setTimeout(() => setCopiedIndex(null), 2000);
   };
 
-  const functionButtons = [
-    { label: '提现管理', icon: Wallet, href: '/agent/withdraw' },
-    { label: '收入明细', icon: FileText, href: '/agent/commissions' },
-    { label: '通知设置', icon: Bell, href: '#' },
-    { label: '分佣设置', icon: Settings, href: '#' },
+  const quickLinks = [
+    { label: '提现管理', icon: Wallet, href: '/agent/withdraw', color: 'bg-[#FAEEDA] text-[#854F0B]' },
+    { label: '收入明细', icon: FileText, href: '/agent/commissions', color: 'bg-[#E6F1FB] text-[#1677FF]' },
+    { label: '我的订单', icon: ShoppingBag, href: '/agent/orders', color: 'bg-[#E1F5EE] text-[#0F6E56]' },
+    { label: '我的团队', icon: Users, href: '/agent/team', color: 'bg-[#EEEDFE] text-[#534AB7]' },
   ];
 
   const menuItems = [
-    { label: '个人中心', sublabel: '基本信息/改密码/实名', icon: User, href: '#' },
+    { label: '个人中心', sublabel: '基本信息 / 修改密码 / 实名认证', icon: User, href: '#' },
     { label: '操作日志', sublabel: '查看操作记录', icon: ClipboardList, href: '#' },
-    { label: '设置', sublabel: '店铺/隐私/分佣', icon: Settings, href: '#' },
-  ];
-
-  const inviteCodes = [
-    { name: '默认推荐码', code: profile?.invite_code || '-' },
+    { label: '通知设置', sublabel: '消息推送 / 提醒方式', icon: Bell, href: '#' },
+    { label: '系统设置', sublabel: '店铺 / 隐私 / 分佣', icon: Settings, href: '#' },
   ];
 
   return (
-    <div className="min-h-screen bg-[#f5f5f5] pb-20">
-      {/* 顶部用户信息栏 - 蓝色渐变 */}
-      <div className="bg-gradient-to-r from-[#1890ff] to-[#0d6efd] px-4 pt-6 pb-8 text-white">
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm">
-            <UserCircle className="w-8 h-8" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="font-medium text-lg">{profile?.name || '用户'}</span>
-              <span className="px-2 py-0.5 bg-[#f6ffed] text-[#52c41a] rounded text-xs">已实名</span>
+    <div className="space-y-5">
+      {/* Page Header */}
+      <div>
+        <h1 className="text-xl font-semibold text-[#000]">个人资料</h1>
+        <p className="text-sm text-[#999] mt-1">管理您的账户信息和安全设置</p>
+      </div>
+
+      {/* User Info Card - Dark */}
+      <Card className="bg-[#0C1A2E] border-0 rounded-xl overflow-hidden">
+        <CardContent className="p-5">
+          <div className="flex items-center gap-4">
+            <div className="h-14 w-14 rounded-full bg-white/10 flex items-center justify-center">
+              <UserCircle className="h-9 w-9 text-white/80" />
             </div>
-            <p className="text-xs text-white/70 mt-0.5">{profile?.email}</p>
-          </div>
-        </div>
-
-        {/* 余额显示 */}
-        <div className="mt-4">
-          <p className="text-xs text-white/70 mb-1">账户余额 (元)</p>
-          <p className="text-2xl font-bold font-mono">
-            ¥{Number(profile?.balance || 0).toFixed(2)}
-          </p>
-        </div>
-      </div>
-
-      {/* 功能按钮区 */}
-      <div className="px-4 -mt-4">
-        <div className="bg-white rounded-lg p-4 grid grid-cols-4 gap-4 shadow-[0_0_20px_rgba(0,0,0,0.05)]">
-          {functionButtons.map((btn, index) => (
-            <a
-              key={index}
-              href={btn.href}
-              className="flex flex-col items-center gap-2"
-            >
-              <div className="w-10 h-10 rounded-full border border-[#0d6efd]/30 flex items-center justify-center">
-                <btn.icon className="w-5 h-5 text-[#0d6efd]" />
+            <div className="flex-1">
+              <div className="flex items-center gap-2">
+                <span className="text-lg font-semibold text-white">{profile?.name || '用户'}</span>
+                <span className="px-2 py-0.5 bg-[#E1F5EE] text-[#0F6E56] rounded text-xs font-medium">已实名</span>
               </div>
-              <span className="text-xs text-gray-600">{btn.label}</span>
-            </a>
-          ))}
-        </div>
+              <p className="text-sm text-white/50 mt-0.5">{profile?.email || '未设置邮箱'}</p>
+            </div>
+          </div>
+          <div className="grid grid-cols-3 gap-4 mt-4 pt-4 border-t border-white/10">
+            <div>
+              <p className="text-[11px] text-white/40">账户余额</p>
+              <p className="text-lg font-bold font-mono text-white mt-0.5">
+                ¥{Number(profile?.balance || 0).toFixed(2)}
+              </p>
+            </div>
+            <div>
+              <p className="text-[11px] text-white/40">邀请码</p>
+              <p className="text-lg font-bold font-mono text-white mt-0.5">
+                {profile?.invite_code || '-'}
+              </p>
+            </div>
+            <div>
+              <p className="text-[11px] text-white/40">账户状态</p>
+              <p className="text-lg font-bold text-white mt-0.5">正常</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Quick Links */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        {quickLinks.map((link, index) => (
+          <Link
+            key={index}
+            href={link.href}
+            className="flex items-center gap-3 p-4 bg-white rounded-xl border border-[#E5E7EB] hover:bg-[#F5F7FA] transition-colors"
+          >
+            <div className={cn('h-10 w-10 rounded-lg flex items-center justify-center', link.color)}>
+              <link.icon className="h-5 w-5" />
+            </div>
+            <span className="text-sm font-medium text-[#333]">{link.label}</span>
+          </Link>
+        ))}
       </div>
 
-      {/* 推荐码区域 */}
-      <div className="px-4 mt-3">
-        <div className="bg-white rounded-lg p-4 shadow-[0_0_20px_rgba(0,0,0,0.05)]">
-          <h3 className="font-medium text-gray-900 mb-3">我的推荐码</h3>
-          {inviteCodes.map((item, index) => (
-            <div key={index} className="flex items-center justify-between py-3 border-b border-gray-100 last:border-0">
+      {/* Two columns */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        {/* Invite Code */}
+        <Card className="rounded-xl border-[#E5E7EB] shadow-none">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base font-medium">推广码管理</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <div className="flex items-center justify-between p-3 bg-[#F5F7FA] rounded-lg">
               <div>
-                <p className="text-sm text-gray-600">{item.name}</p>
-                <p className="font-mono font-medium text-gray-900">{item.code}</p>
+                <p className="text-xs text-[#999]">默认推荐码</p>
+                <p className="font-mono font-semibold text-[#000] mt-0.5">
+                  {profile?.invite_code || '-'}
+                </p>
               </div>
               <button
-                onClick={() => handleCopy(item.code, index)}
+                onClick={() => handleCopy(profile?.invite_code || '', 0)}
                 className={cn(
-                  'px-4 py-1.5 rounded-full text-xs font-medium transition-colors',
-                  copiedIndex === index
-                    ? 'bg-[#f6ffed] text-[#52c41a]'
-                    : 'bg-[#fff2f0] text-[#f5222d] hover:bg-[#ffccc7]'
+                  'px-3 py-1.5 rounded-md text-xs font-medium transition-colors flex items-center gap-1',
+                  copiedIndex === 0
+                    ? 'bg-[#E1F5EE] text-[#0F6E56]'
+                    : 'bg-[#1677FF] text-white hover:bg-[#185FA5]'
                 )}
               >
-                {copiedIndex === index ? '已复制' : '复制'}
+                <Copy className="h-3 w-3" />
+                {copiedIndex === 0 ? '已复制' : '复制'}
               </button>
             </div>
-          ))}
-        </div>
-      </div>
-
-      {/* 菜单列表 */}
-      <div className="px-4 mt-3">
-        <div className="bg-white rounded-lg overflow-hidden shadow-[0_0_20px_rgba(0,0,0,0.05)]">
-          {menuItems.map((item, index) => (
-            <a
-              key={index}
-              href={item.href}
-              className="flex items-center justify-between px-4 py-3 border-b border-gray-100 last:border-0 hover:bg-gray-50 transition-colors"
+            <Link
+              href="/agent/invite"
+              className="flex items-center justify-between p-3 bg-[#E6F1FB] rounded-lg hover:bg-[#B5D4F4] transition-colors"
             >
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-[#e6f7ff] flex items-center justify-center">
-                  <item.icon className="w-4 h-4 text-[#0d6efd]" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-900">{item.label}</p>
-                  <p className="text-xs text-gray-500">{item.sublabel}</p>
-                </div>
+              <div className="flex items-center gap-2">
+                <Link2 className="h-4 w-4 text-[#1677FF]" />
+                <span className="text-sm text-[#1677FF] font-medium">邀请管理</span>
               </div>
-              <ChevronRight className="w-4 h-4 text-gray-400" />
-            </a>
-          ))}
-        </div>
+              <ChevronRight className="h-4 w-4 text-[#1677FF]" />
+            </Link>
+          </CardContent>
+        </Card>
+
+        {/* Menu List */}
+        <Card className="rounded-xl border-[#E5E7EB] shadow-none">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base font-medium">账户管理</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-1">
+            {menuItems.map((item, index) => (
+              <a
+                key={index}
+                href={item.href}
+                className="flex items-center justify-between p-3 rounded-lg hover:bg-[#F5F7FA] transition-colors"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="h-8 w-8 rounded-lg bg-[#E6F1FB] flex items-center justify-center">
+                    <item.icon className="h-4 w-4 text-[#1677FF]" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-[#333]">{item.label}</p>
+                    <p className="text-xs text-[#999]">{item.sublabel}</p>
+                  </div>
+                </div>
+                <ChevronRight className="h-4 w-4 text-[#ccc]" />
+              </a>
+            ))}
+          </CardContent>
+        </Card>
       </div>
 
-      {/* 退出登录 */}
-      <div className="px-4 mt-3">
-        <button
-          onClick={handleLogout}
-          className="w-full bg-white rounded-lg py-3 flex items-center justify-center gap-2 text-[#f5222d] font-medium hover:bg-red-50 transition-colors shadow-[0_0_20px_rgba(0,0,0,0.05)]"
-        >
-          <LogOut className="w-4 h-4" />
-          退出登录
-        </button>
-      </div>
-
-      {/* 底部 Tab 栏 */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-2 py-2 flex justify-around items-center z-50">
-        <a href="/agent" className="flex flex-col items-center gap-1 px-3 py-1">
-          <Wallet className="w-5 h-5 text-gray-400" />
-          <span className="text-xs text-gray-400">首页</span>
-        </a>
-        <a href="/agent/orders" className="flex flex-col items-center gap-1 px-3 py-1">
-          <FileText className="w-5 h-5 text-gray-400" />
-          <span className="text-xs text-gray-400">订单</span>
-        </a>
-        <a href="/agent/products" className="flex flex-col items-center gap-1 px-3 py-1">
-          <ShoppingCart className="w-5 h-5 text-gray-400" />
-          <span className="text-xs text-gray-400">商品</span>
-        </a>
-        <a href="/agent/team" className="flex flex-col items-center gap-1 px-3 py-1">
-          <Users className="w-5 h-5 text-gray-400" />
-          <span className="text-xs text-gray-400">代理</span>
-        </a>
-        <a href="/agent/profile" className="flex flex-col items-center gap-1 px-3 py-1">
-          <UserCircle className="w-5 h-5 text-[#0d6efd]" />
-          <span className="text-xs text-[#0d6efd] font-medium">我的</span>
-        </a>
-      </div>
+      {/* Logout */}
+      <button
+        onClick={handleLogout}
+        className="w-full bg-white rounded-xl py-3.5 flex items-center justify-center gap-2 text-[#A32D2D] font-medium hover:bg-[#FCEBEB] transition-colors border border-[#E5E7EB]"
+      >
+        <LogOut className="h-4 w-4" />
+        退出登录
+      </button>
     </div>
   );
 }
