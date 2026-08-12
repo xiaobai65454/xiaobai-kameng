@@ -66,18 +66,19 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
-    if (isLoading) return;
+    // 等待 profile 完全加载后再判断权限，避免竞态条件
+    if (isLoading || !profile) return;
     if (!isAdmin) {
       router.push('/portal/admin');
     }
-  }, [isAdmin, isLoading, router]);
+  }, [isAdmin, isLoading, profile, router]);
 
   const handleLogout = async () => {
     await logout();
     router.push('/');
   };
 
-  if (isLoading || !isAdmin) {
+  if (isLoading || !profile || !isAdmin) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#F5F7FA]">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#1677FF]"></div>
