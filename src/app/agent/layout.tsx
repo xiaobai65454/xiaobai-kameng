@@ -64,20 +64,21 @@ export default function AgentLayout({ children }: { children: React.ReactNode })
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
-    if (isLoading) return;
+    // 等待 profile 完全加载后再判断权限，避免竞态条件
+    if (isLoading || !profile) return;
     if (!isAuthenticated) {
       router.push('/portal/agent');
     } else if (isAdmin) {
       router.push('/admin');
     }
-  }, [isAuthenticated, isAdmin, isLoading, router]);
+  }, [isAuthenticated, isAdmin, isLoading, profile, router]);
 
   const handleLogout = async () => {
     await logout();
     router.push('/');
   };
 
-  if (isLoading || !isAuthenticated || isAdmin) {
+  if (isLoading || !profile || !isAuthenticated || isAdmin) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#F5F7FA]">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#1677FF]"></div>
