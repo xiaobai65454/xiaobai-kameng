@@ -1,13 +1,15 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Users, ShoppingCart, TrendingUp, Award, Package, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { Users, ShoppingCart, TrendingUp, Award, Package, ArrowUpRight, ArrowDownRight, ClipboardList, Settings, FileText, Wallet, Receipt } from 'lucide-react';
 import {
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   AreaChart, Area, PieChart, Pie, Cell,
 } from 'recharts';
 import { useAuth } from '@/lib/auth-context';
+import { cn } from '@/lib/utils';
 
 interface DashboardData {
   stats: {
@@ -107,87 +109,129 @@ export default function AdminDashboard() {
 
   const COLORS = ['#FA541C', '#1677FF', '#722ED1', '#52C41A', '#F5222D'];
 
+  const quickActions = [
+    { href: '/admin/products', label: '号卡管理', icon: Package, color: 'bg-[#E6F1FB] text-[#1677FF]' },
+    { href: '/admin/orders', label: '订单管理', icon: ShoppingCart, color: 'bg-[#E1F5EE] text-[#0F6E56]' },
+    { href: '/admin/report-orders', label: '报单审核', icon: ClipboardList, color: 'bg-[#FAEEDA] text-[#854F0B]' },
+    { href: '/admin/agents', label: '代理管理', icon: Users, color: 'bg-[#EEEDFE] text-[#534AB7]' },
+    { href: '/admin/levels', label: '等级配置', icon: Award, color: 'bg-[#FAECE7] text-[#993C1D]' },
+    { href: '/admin/commissions', label: '佣金明细', icon: Receipt, color: 'bg-[#E6F1FB] text-[#185FA5]' },
+    { href: '/admin/withdrawals', label: '提现管理', icon: FileText, color: 'bg-[#E1F5EE] text-[#1D9E75]' },
+    { href: '/admin/system', label: '系统管理', icon: Settings, color: 'bg-[#F1EFE8] text-[#5F5E5A]' },
+  ];
+
   return (
     <div className="space-y-5">
       {/* Page Header */}
       <div>
-        <h1 className="text-xl font-bold text-[#000]">数据看板</h1>
-        <p className="text-sm text-[#666] mt-1">系统运营数据概览</p>
+        <h1 className="text-xl font-semibold text-[#000]">数据看板</h1>
+        <p className="text-sm text-[#999] mt-1">系统运营数据概览</p>
       </div>
+
+      {/* Quick Actions */}
+      <Card className="rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] border-0">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base font-medium">快捷操作</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-4 lg:grid-cols-8 gap-3">
+            {quickActions.map((action, index) => (
+              <Link
+                key={index}
+                href={action.href}
+                className="flex flex-col items-center gap-2 p-2 rounded-lg hover:bg-[#F5F7FA] transition-colors"
+              >
+                <div className={cn('h-11 w-11 rounded-xl flex items-center justify-center', action.color)}>
+                  <action.icon className="h-5 w-5" />
+                </div>
+                <span className="text-xs text-[#666]">{action.label}</span>
+              </Link>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] border-0">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs text-[#666]">代理总数</p>
-                <p className="text-2xl font-bold text-[#000] mt-1">{totalAgents}</p>
-                <div className="flex items-center gap-1 mt-1">
-                  <ArrowUpRight className="h-3 w-3 text-[#52C41A]" />
-                  <span className="text-xs text-[#52C41A]">+12%</span>
+        <Link href="/admin/agents">
+          <Card className="rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] border-0 hover:shadow-[0_4px_12px_rgba(0,0,0,0.1)] transition-shadow cursor-pointer">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs text-[#666]">代理总数</p>
+                  <p className="text-2xl font-bold text-[#000] mt-1">{totalAgents}</p>
+                  <div className="flex items-center gap-1 mt-1">
+                    <ArrowUpRight className="h-3 w-3 text-[#52C41A]" />
+                    <span className="text-xs text-[#52C41A]">+12%</span>
+                  </div>
+                </div>
+                <div className="h-10 w-10 rounded-lg bg-[#1677FF]/10 flex items-center justify-center">
+                  <Users className="h-5 w-5 text-[#1677FF]" />
                 </div>
               </div>
-              <div className="h-10 w-10 rounded-lg bg-[#1677FF]/10 flex items-center justify-center">
-                <Users className="h-5 w-5 text-[#1677FF]" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </Link>
 
-        <Card className="rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] border-0">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs text-[#666]">订单总数</p>
-                <p className="text-2xl font-bold text-[#000] mt-1">{totalOrders}</p>
-                <div className="flex items-center gap-1 mt-1">
-                  <ArrowUpRight className="h-3 w-3 text-[#52C41A]" />
-                  <span className="text-xs text-[#52C41A]">+8%</span>
+        <Link href="/admin/orders">
+          <Card className="rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] border-0 hover:shadow-[0_4px_12px_rgba(0,0,0,0.1)] transition-shadow cursor-pointer">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs text-[#666]">订单总数</p>
+                  <p className="text-2xl font-bold text-[#000] mt-1">{totalOrders}</p>
+                  <div className="flex items-center gap-1 mt-1">
+                    <ArrowUpRight className="h-3 w-3 text-[#52C41A]" />
+                    <span className="text-xs text-[#52C41A]">+8%</span>
+                  </div>
+                </div>
+                <div className="h-10 w-10 rounded-lg bg-[#52C41A]/10 flex items-center justify-center">
+                  <ShoppingCart className="h-5 w-5 text-[#52C41A]" />
                 </div>
               </div>
-              <div className="h-10 w-10 rounded-lg bg-[#52C41A]/10 flex items-center justify-center">
-                <ShoppingCart className="h-5 w-5 text-[#52C41A]" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </Link>
 
-        <Card className="rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] border-0">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs text-[#666]">总销售额</p>
-                <p className="text-2xl font-bold text-[#F5222D] mt-1">¥{totalSales.toFixed(2)}</p>
-                <div className="flex items-center gap-1 mt-1">
-                  <ArrowUpRight className="h-3 w-3 text-[#52C41A]" />
-                  <span className="text-xs text-[#52C41A]">+15%</span>
+        <Link href="/admin/finance">
+          <Card className="rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] border-0 hover:shadow-[0_4px_12px_rgba(0,0,0,0.1)] transition-shadow cursor-pointer">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs text-[#666]">总销售额</p>
+                  <p className="text-2xl font-bold text-[#F5222D] mt-1">¥{totalSales.toFixed(2)}</p>
+                  <div className="flex items-center gap-1 mt-1">
+                    <ArrowUpRight className="h-3 w-3 text-[#52C41A]" />
+                    <span className="text-xs text-[#52C41A]">+15%</span>
+                  </div>
+                </div>
+                <div className="h-10 w-10 rounded-lg bg-[#722ED1]/10 flex items-center justify-center">
+                  <TrendingUp className="h-5 w-5 text-[#722ED1]" />
                 </div>
               </div>
-              <div className="h-10 w-10 rounded-lg bg-[#722ED1]/10 flex items-center justify-center">
-                <TrendingUp className="h-5 w-5 text-[#722ED1]" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </Link>
 
-        <Card className="rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] border-0">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs text-[#666]">在售商品</p>
-                <p className="text-2xl font-bold text-[#000] mt-1">-</p>
-                <div className="flex items-center gap-1 mt-1">
-                  <ArrowDownRight className="h-3 w-3 text-[#666]" />
-                  <span className="text-xs text-[#666]">持平</span>
+        <Link href="/admin/products">
+          <Card className="rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] border-0 hover:shadow-[0_4px_12px_rgba(0,0,0,0.1)] transition-shadow cursor-pointer">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs text-[#666]">在售商品</p>
+                  <p className="text-2xl font-bold text-[#000] mt-1">-</p>
+                  <div className="flex items-center gap-1 mt-1">
+                    <ArrowDownRight className="h-3 w-3 text-[#666]" />
+                    <span className="text-xs text-[#666]">持平</span>
+                  </div>
+                </div>
+                <div className="h-10 w-10 rounded-lg bg-[#FA541C]/10 flex items-center justify-center">
+                  <Package className="h-5 w-5 text-[#FA541C]" />
                 </div>
               </div>
-              <div className="h-10 w-10 rounded-lg bg-[#FA541C]/10 flex items-center justify-center">
-                <Package className="h-5 w-5 text-[#FA541C]" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </Link>
       </div>
 
       {/* Charts */}
@@ -251,7 +295,10 @@ export default function AdminDashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         <Card className="rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] border-0">
           <CardHeader className="pb-2">
-            <CardTitle className="text-base font-medium">最近订单</CardTitle>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-base font-medium">最近订单</CardTitle>
+              <Link href="/admin/orders" className="text-xs text-[#1677FF] hover:underline">查看全部</Link>
+            </div>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
@@ -279,7 +326,10 @@ export default function AdminDashboard() {
 
         <Card className="rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] border-0">
           <CardHeader className="pb-2">
-            <CardTitle className="text-base font-medium">代理排名</CardTitle>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-base font-medium">代理排名</CardTitle>
+              <Link href="/admin/agents" className="text-xs text-[#1677FF] hover:underline">查看全部</Link>
+            </div>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
