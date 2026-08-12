@@ -12,16 +12,21 @@ export default function AdminLoginPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const { login, isAuthenticated, isAdmin } = useAuth();
+  const { login, isAuthenticated, isAdmin, isLoading, profile } = useAuth();
   const { isReady } = useSupabaseConfig();
 
   useEffect(() => {
-    if (isAuthenticated && isAdmin) {
+    // 等待 profile 完全加载后再决定跳转，避免竞态条件
+    // isLoading 为 true 表示 auth 或 profile 正在加载中
+    if (isLoading || !profile) return;
+    if (isAdmin) {
       router.push('/admin');
-    } else if (isAuthenticated && !isAdmin) {
+    } else if (profile.role === 'channel') {
+      router.push('/portal/channel');
+    } else {
       router.push('/portal/agent');
     }
-  }, [isAuthenticated, isAdmin, router]);
+  }, [isLoading, isAdmin, profile, router]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -36,8 +41,10 @@ export default function AdminLoginPage() {
         setError(error === 'Invalid login credentials' ? '账号或密码错误' : error);
       } else if (profile?.role === 'admin') {
         router.push('/admin');
+      } else if (profile?.role === 'channel') {
+        router.push('/portal/channel');
       } else if (profile) {
-        // 非管理员用户，跳转到代理登录页
+        // 代理用户，跳转到代理登录页
         router.push('/portal/agent');
       }
     } catch {
