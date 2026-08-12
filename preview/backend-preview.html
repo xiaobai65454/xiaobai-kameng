@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>三端后台 UI 预览 - 小白卡盟</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script>
+tailwind.config = { theme: { extend: { fontFamily: { sans: ['Noto Sans SC', 'system-ui', 'sans-serif'] } } } }
+</script>
+<style>
+  body { font-family: 'Noto Sans SC', system-ui, sans-serif; }
+  .tab-active { background: #1677FF; color: #fff !important; }
+  .tab-inactive { color: #999; }
+  .panel { display: none; }
+  .panel.active { display: flex; }
+  .page { display: none; }
+  .page.active { display: block; }
+  .ico { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .ico-sm { width: 14px; height: 14px; }
+  .ico-lg { width: 20px; height: 20px; }
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  .main-scroll::-webkit-scrollbar-thumb { background: #ddd; }
+  .menu-active { background: #1677FF; color: #fff !important; }
+  .menu-inactive { color: rgba(255,255,255,0.55); }
+  .menu-inactive:hover { background: rgba(255,255,255,0.08); color: #fff; }
+  table { border-collapse: collapse; width: 100%; }
+  th { text-align: left; font-size: 12px; color: #999; font-weight: 500; padding: 10px 12px; border-bottom: 1px solid #E5E7EB; }
+  td { font-size: 13px; color: #333; padding: 12px; border-bottom: 1px solid #F3F4F6; }
+  .badge { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 500; }
+  .input-field { border: 1px solid #E5E7EB; border-radius: 8px; padding: 8px 12px; font-size: 13px; outline: none; transition: border-color 0.2s; }
+  .input-field:focus { border-color: #1677FF; }
+  .btn-primary { background: #1677FF; color: #fff; padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 500; transition: background 0.2s; cursor: pointer; border: none; }
+  .btn-primary:hover { background: #185FA5; }
+  .btn-ghost { background: #fff; color: #666; padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 500; border: 1px solid #E5E7EB; cursor: pointer; transition: all 0.2s; }
+  .btn-ghost:hover { border-color: #1677FF; color: #1677FF; }
+</style>
+</head>
+<body class="bg-[#F5F7FA]">
+
+<!-- ============ TAB SWITCHER ============ -->
+<div class="fixed top-0 left-0 right-0 h-12 bg-[#0C1A2E] z-[100] flex items-center px-4 gap-2 shadow-lg">
+  <span class="text-white/60 text-xs mr-3 whitespace-nowrap">预览切换：</span>
+  <button onclick="switchPanel('admin')" id="tab-admin" class="tab-btn px-4 py-1.5 rounded-md text-sm font-medium transition-all tab-active">管理端后台</button>
+  <button onclick="switchPanel('agent')" id="tab-agent" class="tab-btn px-4 py-1.5 rounded-md text-sm font-medium transition-all tab-inactive hover:text-white/80">代理端后台</button>
+  <button onclick="switchPanel('channel')" id="tab-channel" class="tab-btn px-4 py-1.5 rounded-md text-sm font-medium transition-all tab-inactive hover:text-white/80">渠道端后台</button>
+  <div class="flex-1"></div>
+  <span class="text-white/30 text-xs">静态预览 · 模拟数据 · 点击侧边栏可切换页面</span>
+</div>
+
+<!-- ====================================================== -->
+<!-- ============ ADMIN PANEL ============================= -->
+<!-- ====================================================== -->
+<div id="panel-admin" class="panel active min-h-screen pt-12">
+  <div class="flex min-h-[calc(100vh-48px)]">
+    <!-- Sidebar -->
+    <aside class="w-60 bg-[#0C1A2E] text-white flex flex-col shrink-0">
+      <div class="h-16 px-5 flex items-center gap-3 border-b border-white/8 shrink-0">
+        <div class="h-9 w-9 rounded-lg bg-[#1677FF] flex items-center justify-center">
+          <svg class="ico-lg" viewBox="0 0 24 24"><path d="M21 10V8a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h4"/><path d="m16 12 4 4-4 4"/><path d="M20 16H10"/><path d="M3 10h18"/></svg>
+        </div>
+        <div><h1 class="text-base font-semibold leading-tight">小白卡盟</h1><p class="text-[11px] text-white/40 leading-tight">管理后台</p></div>
+      </div>
+      <nav class="flex-1 py-3 overflow-y-auto" id="admin-nav">
+        <div class="mb-1">
+          <p class="px-5 py-1.5 text-[11px] font-medium text-white/30 uppercase tracking-wide">工作台</p>
+          <a onclick="navPage('admin','dashboard')" data-page="dashboard" class="nav-item flex items-center gap-3 mx-2 px-3 py-2.5 rounded-lg text-[13px] cursor-pointer menu-active">
+            <svg class="ico" viewBox="0 0 24 24"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>数据看板
+          </a>
+        </div>
+        <div class="mb-1">
+          <p class="px-5 py-1.5 text-[11px] font-medium text-white/30 uppercase tracking-wide">业务管理</p>
+          <a onclick="navPage('admin','products')" data-page="products" class="nav-item flex items-center gap-3 mx-2 px-3 py-2.5 rounded-lg text-[13px] cursor-pointer menu-inactive">
+            <svg class="ico" viewBox="0 0 24 24"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>号卡管理
+          </a>
+          <a onclick="navPage('admin','orders')" data-page="orders" class="nav-item flex items-center gap-3 mx-2 px-3 py-2.5 rounded-lg text-[13px] cursor-pointer menu-inactive">
+            <svg class="ico" viewBox="0 0 24 24"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>订单管理
+          </a>
+          <a onclick="navPage('admin','report-orders')" data-page="report-orders" class="nav-item flex items-center gap-3 mx-2 px-3 py-2.5 rounded-lg text-[13px] cursor-pointer menu-inactive">
+            <svg class="ico" viewBox="0 0 24 24"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/></svg>报单审核
+          </a>
+        </div>
+        <div class="mb-1">
+          <p class="px-5 py-1.5 text-[11px] font-medium text-white/30 uppercase tracking-wide">代理体系</p>
+          <a onclick="navPage('admin','agents')" data-page="agents" class="nav-item flex items-center gap-3 mx-2 px-3 py-2.5 rounded-lg text-[13px] cursor-pointer menu-inactive">
+            <svg class="ico" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>代理管理
+          </a>
+          <a onclick="navPage('admin','levels')" data-page="levels" class="nav-item flex items-center gap-3 mx-2 px-3 py-2.5 rounded-lg text-[13px] cursor-pointer menu-inactive">
+            <svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>等级配置
+          </a>
+          <a onclick="navPage('admin','commissions')" data-page="commissions" class="nav-item flex items-center gap-3 mx-2 px-3 py-2.5 rounded-lg text-[13px] cursor-pointer menu-inactive">
+            <svg class="ico" viewBox="0 0 24 24"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M8 7h8"/><path d="M8 11h8"/><path d="M8 15h5"/></svg>佣金明细
+          </a>
+          <a onclick="navPage('admin','withdrawals')" data-page="withdrawals" class="nav-item flex items-center gap-3 mx-2 px-3 py-2.5 rounded-lg text-[13px] cursor-pointer menu-inactive">
+            <svg class="ico" viewBox="0 0 24 24"><path d="M12 2v20"/><path d="m17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>提现管理
+          </a>
+          <a onclick="navPage('admin','finance')" data-page="finance" class="nav-item flex items-center gap-3 mx-2 px-3 py-2.5 rounded-lg text-[13px] cursor-pointer menu-inactive">
+            <svg class="ico" viewBox="0 0 24 24"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></svg>财务管理
+          </a>
+        </div>
+        <div class="mb-1">
+          <p class="px-5 py-1.5 text-[11px] font-medium text-white/30 uppercase tracking-wide">系统</p>
+          <a onclick="navPage('admin','system')" data-page="system" class="nav-item flex items-center gap-3 mx-2 px-3 py-2.5 rounded-lg text-[13px] cursor-pointer menu-inactive">
+            <svg class="ico" viewBox="0 0 24 24"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>系统管理
+          </a>
+        </div>
+      </nav>
+      <div class="p-3 border-t border-white/8 shrink-0">
+        <div class="flex items-center gap-3 px-3 py-2 mb-2 rounded-lg hover:bg-white/8 cursor-pointer">
+          <div class="h-9 w-9 rounded-full bg-[#1677FF] flex items-center justify-center text-sm font-semibold">A</div>
+          <div><p class="text-sm font-medium truncate">Admin</p><p class="text-[11px] text-white/40 truncate">系统管理员</p></div>
+        </div>
+        <button class="w-full flex items-center gap-2 px-3 py-2 text-[13px] text-white/50 hover:text-white hover:bg-white/8 rounded-lg">
+          <svg class="ico-sm" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>退出登录
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col min-w-0">
+      <header class="h-16 bg-white border-b border-[#E5E7EB] flex items-center px-6 sticky top-12 z-30">
+        <div class="flex items-center gap-2 text-[13px]"><span class="text-[#999]">首页</span><svg class="ico-sm text-[#ccc]" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg><span class="text-[#333] font-medium" id="admin-breadcrumb">数据看板</span></div>
+        <div class="flex-1"></div>
+        <div class="flex items-center gap-3">
+          <button class="relative p-2 rounded-lg hover:bg-[#F5F7FA]"><svg class="ico-lg text-[#666]" viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="absolute top-1.5 right-1.5 h-2 w-2 bg-[#F5222D] rounded-full"></span></button>
+          <div class="h-8 w-8 rounded-full bg-[#1677FF] flex items-center justify-center text-sm font-medium text-white">A</div>
+        </div>
+      </header>
+      <main class="flex-1 p-6 overflow-auto main-scroll" id="admin-content">
+
+        <!-- ====== Dashboard Page ====== -->
+        <div class="page active" id="admin-dashboard">
+          <div class="space-y-5">
+            <div><h1 class="text-xl font-semibold text-[#000]">数据看板</h1><p class="text-sm text-[#999] mt-1">系统运营数据概览</p></div>
+
+            <!-- Quick Actions -->
+            <div class="bg-white rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] p-5">
+              <p class="text-base font-medium mb-3">快捷操作</p>
+              <div class="grid grid-cols-8 gap-3">
+                <a onclick="navPage('admin','products')" class="flex flex-col items-center gap-2 p-2 rounded-lg hover:bg-[#F5F7FA] cursor-pointer"><div class="h-11 w-11 rounded-xl bg-[#E6F1FB] flex items-center justify-center text-[#1677FF]"><svg class="ico-lg" viewBox="0 0 24 24"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg></div><span class="text-xs text-[#666]">号卡管理</span></a>
+                <a onclick="navPage('admin','orders')" class="flex flex-col items-center gap-2 p-2 rounded-lg hover:bg-[#F5F7FA] cursor-pointer"><div class="h-11 w-11 rounded-xl bg-[#E1F5EE] flex items-center justify-center text-[#0F6E56]"><svg class="ico-lg" viewBox="0 0 24 24"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg></div><span class="text-xs text-[#666]">订单管理</span></a>
+                <a onclick="navPage('admin','report-orders')" class="flex flex-col items-center gap-2 p-2 rounded-lg hover:bg-[#F5F7FA] cursor-pointer"><div class="h-11 w-11 rounded-xl bg-[#FAEEDA] flex items-center justify-center text-[#854F0B]"><svg class="ico-lg" viewBox="0 0 24 24"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4"/><path d="M12 16h4"/></svg></div><span class="text-xs text-[#666]">报单审核</span></a>
+                <a onclick="navPage('admin','agents')" class="flex flex-col items-center gap-2 p-2 rounded-lg hover:bg-[#F5F7FA] cursor-pointer"><div class="h-11 w-11 rounded-xl bg-[#EEEDFE] flex items-center justify-center text-[#534AB7]"><svg class="ico-lg" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/></svg></div><span class="text-xs text-[#666]">代理管理</span></a>
+                <a onclick="navPage('admin','levels')" class="flex flex-col items-center gap-2 p-2 rounded-lg hover:bg-[#F5F7FA] cursor-pointer"><div class="h-11 w-11 rounded-xl bg-[#FAECE7] flex items-center justify-center text-[#993C1D]"><svg class="ico-lg" viewBox="0 0 24 24"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg></div><span class="text-xs text-[#666]">等级配置</span></a>
+                <a onclick="navPage('admin','commissions')" class="flex flex-col items-center gap-2 p-2 rounded-lg hover:bg-[#F5F7FA] cursor-pointer"><div class="h-11 w-11 rounded-xl bg-[#E6F1FB] flex items-center justify-center text-[#185FA5]"><svg class="ico-lg" viewBox="0 0 24 24"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M8 7h8"/><path d="M8 11h8"/></svg></div><span class="text-xs text-[#666]">佣金明细</span></a>
+                <a onclick="navPage('admin','withdrawals')" class="flex flex-col items-center gap-2 p-2 rounded-lg hover:bg-[#F5F7FA] cursor-pointer"><div class="h-11 w-11 rounded-xl bg-[#E1F5EE] flex items-center justify-center text-[#1D9E75]"><svg class="ico-lg" viewBox="0 0 24 24"><path d="M12 2v20"/><path d="m17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div><span class="text-xs text-[#666]">提现管理</span></a>
+                <a onclick="navPage('admin','system')" class="flex flex-col items-center gap-2 p-2 rounded-lg hover:bg-[#F5F7FA] cursor-pointer"><div class="h-11 w-11 rounded-xl bg-[#F1EFE8] flex items-center justify-center text-[#5F5E5A]"><svg class="ico-lg" viewBox="0 0 24 24"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg></div><span class="text-xs text-[#666]">系统管理</span></a>
+              </div>
+            </div>
+
+            <!-- Stats -->
+            <div class="grid grid-cols-4 gap-4">
+              <div onclick="navPage('admin','agents')" class="bg-white rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] p-4 cursor-pointer hover:shadow-[0_4px_12px_rgba(0,0,0,0.1)] transition-shadow"><div class="flex items-center justify-between"><div><p class="text-xs text-[#666]">代理总数</p><p class="text-2xl font-bold text-[#000] mt-1">128</p><div class="flex items-center gap-1 mt-1"><svg class="ico-sm text-[#52C41A]" viewBox="0 0 24 24"><path d="m6 9 6-6 6 6"/><path d="M12 3v18"/></svg><span class="text-xs text-[#52C41A]">+12%</span></div></div><div class="h-10 w-10 rounded-lg bg-[#1677FF]/10 flex items-center justify-center"><svg class="ico-lg text-[#1677FF]" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div></div></div>
+              <div onclick="navPage('admin','orders')" class="bg-white rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] p-4 cursor-pointer hover:shadow-[0_4px_12px_rgba(0,0,0,0.1)] transition-shadow"><div class="flex items-center justify-between"><div><p class="text-xs text-[#666]">订单总数</p><p class="text-2xl font-bold text-[#000] mt-1">3,568</p><div class="flex items-center gap-1 mt-1"><svg class="ico-sm text-[#52C41A]" viewBox="0 0 24 24"><path d="m6 9 6-6 6 6"/><path d="M12 3v18"/></svg><span class="text-xs text-[#52C41A]">+8%</span></div></div><div class="h-10 w-10 rounded-lg bg-[#52C41A]/10 flex items-center justify-center"><svg class="ico-lg text-[#52C41A]" viewBox="0 0 24 24"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg></div></div></div>
+              <div onclick="navPage('admin','finance')" class="bg-white rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] p-4 cursor-pointer hover:shadow-[0_4px_12px_rgba(0,0,0,0.1)] transition-shadow"><div class="flex items-center justify-between"><div><p class="text-xs text-[#666]">总销售额</p><p class="text-2xl font-bold text-[#F5222D] mt-1">¥128,560.00</p><div class="flex items-center gap-1 mt-1"><svg class="ico-sm text-[#52C41A]" viewBox="0 0 24 24"><path d="m6 9 6-6 6 6"/><path d="M12 3v18"/></svg><span class="text-xs text-[#52C41A]">+15%</span></div></div><div class="h-10 w-10 rounded-lg bg-[#722ED1]/10 flex items-center justify-center"><svg class="ico-lg text-[#722ED1]" viewBox="0 0 24 24"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></div></div></div>
+              <div onclick="navPage('admin','products')" class="bg-white rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] p-4 cursor-pointer hover:shadow-[0_4px_12px_rgba(0,0,0,0.1)] transition-shadow"><div class="flex items-center justify-between"><div><p class="text-xs text-[#666]">在售商品</p><p class="text-2xl font-bold text-[#000] mt-1">42</p><div class="flex items-center gap-1 mt-1"><svg class="ico-sm text-[#666]" viewBox="0 0 24 24"><path d="M7 7h10l-1 12H8L7 7Z"/><path d="M9 7V5a3 3 0 0 1 6 0v2"/></svg><span class="text-xs text-[#666]">持平</span></div></div><div class="h-10 w-10 rounded-lg bg-[#FA541C]/10 flex items-center justify-center"><svg class="ico-lg text-[#FA541C]" viewBox="0 0 24 24"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/></svg></div></div></div>
+            </div>
+
+            <!-- Tables -->
+            <div class="grid grid-cols-2 gap-5">
+              <div class="bg-white rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.06)]">
+                <div class="p-5 pb-2 flex items-center justify-between"><p class="text-base font-medium">最近订单</p><span onclick="navPage('admin','orders')" class="text-xs text-[#1677FF] cursor-pointer hover:underline">查看全部</span></div>
+                <div class="px-5 pb-4 space-y-3">
+                  <div class="flex items-center justify-between p-3 bg-[#F0F5FF] rounded-xl"><div><p class="text-sm font-medium text-[#000]">XBKM20260812001</p><p class="text-xs text-[#666]">张三</p></div><div class="text-right"><p class="text-sm font-bold text-[#F5222D]">¥99.00</p><span class="badge bg-[#1677FF]/10 text-[#1677FF]">已开卡</span></div></div>
+                  <div class="flex items-center justify-between p-3 bg-[#F0F5FF] rounded-xl"><div><p class="text-sm font-medium text-[#000]">XBKM20260812002</p><p class="text-xs text-[#666]">李四</p></div><div class="text-right"><p class="text-sm font-bold text-[#F5222D]">¥129.00</p><span class="badge bg-[#FA541C]/10 text-[#FA541C]">待审核</span></div></div>
+                  <div class="flex items-center justify-between p-3 bg-[#F0F5FF] rounded-xl"><div><p class="text-sm font-medium text-[#000]">XBKM20260812003</p><p class="text-xs text-[#666]">王五</p></div><div class="text-right"><p class="text-sm font-bold text-[#F5222D]">¥89.00</p><span class="badge bg-[#52C41A]/10 text-[#52C41A]">已完成</span></div></div>
+                </div>
+              </div>
+              <div class="bg-white rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.06)]">
+                <div class="p-5 pb-2 flex items-center justify-between"><p class="text-base font-medium">代理排名</p><span onclick="navPage('admin','agents')" class="text-xs text-[#1677FF] cursor-pointer hover:underline">查看全部</span></div>
+                <div class="px-5 pb-4 space-y-3">
+                  <div class="flex items-center justify-between p-3 bg-[#F0F5FF] rounded-xl"><div class="flex items-center gap-3"><span class="h-6 w-6 rounded-full flex items-center justify-center text-xs font-bold bg-[#FA541C] text-white">1</span><div><p class="text-sm font-medium text-[#000]">张三</p><p class="text-xs text-[#666]">团队 25 人</p></div></div><div class="text-right"><p class="text-sm font-bold text-[#F5222D]">¥12,580.00</p><p class="text-xs text-[#666]">156 单</p></div></div>
+                  <div class="flex items-center justify-between p-3 bg-[#F0F5FF] rounded-xl"><div class="flex items-center gap-3"><span class="h-6 w-6 rounded-full flex items-center justify-center text-xs font-bold bg-[#FA8C16] text-white">2</span><div><p class="text-sm font-medium text-[#000]">李四</p><p class="text-xs text-[#666]">团队 18 人</p></div></div><div class="text-right"><p class="text-sm font-bold text-[#F5222D]">¥8,920.00</p><p class="text-xs text-[#666]">98 单</p></div></div>
+                  <div class="flex items-center justify-between p-3 bg-[#F0F5FF] rounded-xl"><div class="flex items-center gap-3"><span class="h-6 w-6 rounded-full flex items-center justify-center text-xs font-bold bg-[#FAAD14] text-white">3</span><div><p class="text-sm font-medium text-[#000]">王五</p><p class="text-xs text-[#666]">团队 12 人</p></div></div><div class="text-right"><p class="text-sm font-bold text-[#F5222D]">¥6,350.00</p><p class="text-xs text-[#666]">72 单</p></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ====== Products Page ====== -->
+        <div class="page" id="admin-products">
+          <div class="space-y-5">
+            <div class="flex items-center justify-between"><div><h1 class="text-xl font-semibold text-[#000]">号卡管理</h1><p class="text-sm text-[#999] mt-1">管理所有号卡产品</p></div><button class="btn-primary flex items-center gap-2"><svg class="ico-sm" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5v14"/></svg>添加号卡</button></div>
+            <div class="bg-white rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] p-5">
+              <div class="flex gap-3 mb-4"><input class="input-field flex-1" placeholder="搜索号卡名称..."><select class="input-field"><option>全部运营商</option><option>中国移动</option><option>中国联通</option><option>中国电信</option></select><select class="input-field"><option>全部状态</option><option>在售</option><option>下架</option></select><button class="btn-primary">查询</button></div>
+              <table><thead><tr><th>号卡名称</th><th>运营商</th><th>月租(元)</th><th>佣金(元)</th><th>状态</th><th>创建时间</th><th>操作</th></tr></thead><tbody>
+                <tr><td>联通惠派卡</td><td>中国联通</td><td>9</td><td class="text-[#F5222D] font-medium">30.00</td><td><span class="badge bg-[#52C41A]/10 text-[#52C41A]">在售</span></td><td>2026-08-10</td><td><button class="text-[#1677FF] text-xs hover:underline mr-2">编辑</button><button class="text-[#F5222D] text-xs hover:underline">下架</button></td></tr>
+                <tr><td>移动花卡</td><td>中国移动</td><td>19</td><td class="text-[#F5222D] font-medium">45.00</td><td><span class="badge bg-[#52C41A]/10 text-[#52C41A]">在售</span></td><td>2026-08-09</td><td><button class="text-[#1677FF] text-xs hover:underline mr-2">编辑</button><button class="text-[#F5222D] text-xs hover:underline">下架</button></td></tr>
+                <tr><td>电信星卡</td><td>中国电信</td><td>29</td><td class="text-[#F5222D] font-medium">55.00</td><td><span class="badge bg-[#52C41A]/10 text-[#52C41A]">在售</span></td><td>2026-08-08</td><td><button class="text-[#1677FF] text-xs hover:underline mr-2">编辑</button><button class="text-[#F5222D] text-xs hover:underline">下架</button></td></tr>
+                <tr><td>联通腾讯王卡</td><td>中国联通</td><td>39</td><td class="text-[#F5222D] font-medium">60.00</td><td><span class="badge bg-[#999]/10 text-[#999]">下架</span></td><td>2026-08-05</td><td><button class="text-[#1677FF] text-xs hover:underline mr-2">编辑</button><button class="text-[#52C41A] text-xs hover:underline">上架</button></td></tr>
+                <tr><td>移动潮玩卡</td><td>中国移动</td><td>15</td><td class="text-[#F5222D] font-medium">25.00</td><td><span class="badge bg-[#52C41A]/10 text-[#52C41A]">在售</span></td><td>2026-08-03</td><td><button class="text-[#1677FF] text-xs hover:underline mr-2">编辑</button><button class="text-[#F5222D] text-xs hover:underline">下架</button></td></tr>
+              </tbody></table>
+              <div class="flex items-center justify-between mt-4 text-xs text-[#999]"><span>共 42 条记录</span><div class="flex gap-1"><button class="px-3 py-1 rounded border border-[#E5E7EB]">上一页</button><button class="px-3 py-1 rounded bg-[#1677FF] text-white">1</button><button class="px-3 py-1 rounded border border-[#E5E7EB]">2</button><button class="px-3 py-1 rounded border border-[#E5E7EB]">3</button><button class="px-3 py-1 rounded border border-[#E5E7EB]">下一页</button></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ====== Orders Page ====== -->
+        <div class="page" id="admin-orders">
+          <div class="space-y-5">
+            <div><h1 class="text-xl font-semibold text-[#000]">订单管理</h1><p class="text-sm text-[#999] mt-1">管理全部订单</p></div>
+            <div class="bg-white rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] p-5">
+              <div class="flex gap-3 mb-4"><input class="input-field flex-1" placeholder="搜索订单号/手机号..."><select class="input-field"><option>全部状态</option><option>待审核</option><option>已开卡</option><option>已寄出</option><option>已完成</option><option>已取消</option></select><button class="btn-primary">查询</button><button class="btn-ghost">导出Excel</button></div>
+              <table><thead><tr><th>订单号</th><th>号卡</th><th>客户姓名</th><th>手机号</th><th>金额</th><th>状态</th><th>下单时间</th><th>操作</th></tr></thead><tbody>
+                <tr><td>XBKM20260812001</td><td>联通惠派卡</td><td>张三</td><td>138****8888</td><td class="font-medium">¥99.00</td><td><span class="badge bg-[#1677FF]/10 text-[#1677FF]">已开卡</span></td><td>2026-08-12 10:30</td><td><button class="text-[#1677FF] text-xs hover:underline">详情</button></td></tr>
+                <tr><td>XBKM20260812002</td><td>移动花卡</td><td>李四</td><td>139****6666</td><td class="font-medium">¥129.00</td><td><span class="badge bg-[#FA541C]/10 text-[#FA541C]">待审核</span></td><td>2026-08-12 09:15</td><td><button class="text-[#1677FF] text-xs hover:underline">详情</button></td></tr>
+                <tr><td>XBKM20260812003</td><td>电信星卡</td><td>王五</td><td>137****7777</td><td class="font-medium">¥89.00</td><td><span class="badge bg-[#52C41A]/10 text-[#52C41A]">已完成</span></td><td>2026-08-11 16:20</td><td><button class="text-[#1677FF] text-xs hover:underline">详情</button></td></tr>
+                <tr><td>XBKM20260811004</td><td>联通惠派卡</td><td>赵六</td><td>135****5555</td><td class="font-medium">¥99.00</td><td><span class="badge bg-[#722ED1]/10 text-[#722ED1]">已寄出</span></td><td>2026-08-11 14:05</td><td><button class="text-[#1677FF] text-xs hover:underline">详情</button></td></tr>
+                <tr><td>XBKM20260810005</td><td>移动潮玩卡</td><td>孙七</td><td>136****3333</td><td class="font-medium">¥69.00</td><td><span class="badge bg-[#F5222D]/10 text-[#F5222D]">已取消</span></td><td>2026-08-10 11:45</td><td><button class="text-[#1677FF] text-xs hover:underline">详情</button></td></tr>
+              </tbody></table>
+              <div class="flex items-center justify-between mt-4 text-xs text-[#999]"><span>共 3,568 条记录</span><div class="flex gap-1"><button class="px-3 py-1 rounded border border-[#E5E7EB]">上一页</button><button class="px-3 py-1 rounded bg-[#1677FF] text-white">1</button><button class="px-3 py-1 rounded border border-[#E5E7EB]">2</button><button class="px-3 py-1 rounded border border-[#E5E7EB]">3</button><button class="px-3 py-1 rounded border border-[#E5E7EB]">下一页</button></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ====== Report Orders Page ====== -->
+        <div class="page" id="admin-report-orders">
+          <div class="space-y-5">
+            <div><h1 class="text-xl font-semibold text-[#000]">报单审核</h1><p class="text-sm text-[#999] mt-1">审核代理提交的号卡报单</p></div>
+            <div class="bg-white rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] p-5">
+              <table><thead><tr><th>报单编号</th><th>号卡</th><th>代理人</th><th>客户姓名</th><th>手机号</th><th>状态</th><th>提交时间</th><th>操作</th></tr></thead><tbody>
+                <tr><td>BD20260812001</td><td>联通惠派卡</td><td>张三</td><td>周八</td><td>138****1234</td><td><span class="badge bg-[#FA541C]/10 text-[#FA541C]">待审核</span></td><td>2026-08-12 08:30</td><td><button class="btn-primary text-xs px-3 py-1">通过</button> <button class="btn-ghost text-xs px-3 py-1 ml-1">驳回</button></td></tr>
+                <tr><td>BD20260812002</td><td>移动花卡</td><td>李四</td><td>吴九</td><td>139****5678</td><td><span class="badge bg-[#FA541C]/10 text-[#FA541C]">待审核</span></td><td>2026-08-12 07:15</td><td><button class="btn-primary text-xs px-3 py-1">通过</button> <button class="btn-ghost text-xs px-3 py-1 ml-1">驳回</button></td></tr>
+                <tr><td>BD20260811003</td><td>电信星卡</td><td>王五</td><td>郑十</td><td>137****9012</td><td><span class="badge bg-[#52C41A]/10 text-[#52C41A]">已通过</span></td><td>2026-08-11 16:00</td><td><button class="text-[#1677FF] text-xs hover:underline">查看</button></td></tr>
+              </tbody></table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ====== Agents Page ====== -->
+        <div class="page" id="admin-agents">
+          <div class="space-y-5">
+            <div class="flex items-center justify-between"><div><h1 class="text-xl font-semibold text-[#000]">代理管理</h1><p class="text-sm text-[#999] mt-1">管理所有代理商</p></div><button class="btn-primary flex items-center gap-2"><svg class="ico-sm" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>添加代理</button></div>
+            <div class="bg-white rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] p-5">
+              <div class="flex gap-3 mb-4"><input class="input-field flex-1" placeholder="搜索代理姓名/手机号..."><select class="input-field"><option>全部等级</option><option>V1 见习代理</option><option>V2 铜牌代理</option><option>V3 银牌代理</option><option>V4 金牌代理</option><option>V5 钻石代理</option></select><button class="btn-primary">查询</button></div>
+              <table><thead><tr><th>代理姓名</th><th>手机号</th><th>等级</th><th>上级代理</th><th>团队人数</th><th>累计销售额</th><th>余额</th><th>状态</th><th>操作</th></tr></thead><tbody>
+                <tr><td>张三</td><td>138****8888</td><td><span class="badge bg-[#722ED1]/10 text-[#722ED1]">V5 钻石</span></td><td>-</td><td>25</td><td class="text-[#F5222D] font-medium">¥12,580.00</td><td>¥3,200.00</td><td><span class="badge bg-[#52C41A]/10 text-[#52C41A]">正常</span></td><td><button class="text-[#1677FF] text-xs hover:underline mr-2">详情</button><button class="text-[#1677FF] text-xs hover:underline">编辑</button></td></tr>
+                <tr><td>李四</td><td>139****6666</td><td><span class="badge bg-[#FA541C]/10 text-[#FA541C]">V4 金牌</span></td><td>张三</td><td>18</td><td class="text-[#F5222D] font-medium">¥8,920.00</td><td>¥1,500.00</td><td><span class="badge bg-[#52C41A]/10 text-[#52C41A]">正常</span></td><td><button class="text-[#1677FF] text-xs hover:underline mr-2">详情</button><button class="text-[#1677FF] text-xs hover:underline">编辑</button></td></tr>
+                <tr><td>王五</td><td>137****7777</td><td><span class="badge bg-[#1677FF]/10 text-[#1677FF]">V3 银牌</span></td><td>张三</td><td>12</td><td class="text-[#F5222D] font-medium">¥6,350.00</td><td>¥800.00</td><td><span class="badge bg-[#52C41A]/10 text-[#52C41A]">正常</span></td><td><button class="text-[#1677FF] text-xs hover:underline mr-2">详情</button><button class="text-[#1677FF] text-xs hover:underline">编辑</button></td></tr>
+                <tr><td>赵六</td><td>135****5555</td><td><span class="badge bg-[#52C41A]/10 text-[#52C41A]">V2 铜牌</span></td><td>李四</td><td>5</td><td class="text-[#F5222D] font-medium">¥2,100.00</td><td>¥300.00</td><td><span class="badge bg-[#999]/10 text-[#999]">冻结</span></td><td><button class="text-[#1677FF] text-xs hover:underline mr-2">详情</button><button class="text-[#1677FF] text-xs hover:underline">编辑</button></td></tr>
+              </tbody></table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ====== Levels Page ====== -->
+        <div class="page" id="admin-levels">
+          <div class="space-y-5">
+            <div><h1 class="text-xl font-semibold text-[#000]">等级配置</h1><p class="text-sm text-[#999] mt-1">配置代理等级体系</p></div>
+            <div class="bg-white rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] p-5">
+              <table><thead><tr><th>等级</th><th>等级名称</th><th>升级条件(团队人数)</th><th>一级佣金比例</th><th>二级佣金比例</th><th>三级佣金比例</th><th>操作</th></tr></thead><tbody>
+                <tr><td><span class="badge bg-[#52C41A]/10 text-[#52C41A]">V1</span></td><td>见习代理</td><td>0</td><td>30%</td><td>15%</td><td>5%</td><td><button class="text-[#1677FF] text-xs hover:underline">编辑</button></td></tr>
+                <tr><td><span class="badge bg-[#52C41A]/10 text-[#52C41A]">V2</span></td><td>铜牌代理</td><td>10</td><td>35%</td><td>18%</td><td>6%</td><td><button class="text-[#1677FF] text-xs hover:underline">编辑</button></td></tr>
+                <tr><td><span class="badge bg-[#1677FF]/10 text-[#1677FF]">V3</span></td><td>银牌代理</td><td>50</td><td>40%</td><td>20%</td><td>7%</td><td><button class="text-[#1677FF] text-xs hover:underline">编辑</button></td></tr>
+                <tr><td><span class="badge bg-[#FA541C]/10 text-[#FA541C]">V4</span></td><td>金牌代理</td><td>200</td><td>45%</td><td>22%</td><td>8%</td><td><button class="text-[#1677FF] text-xs hover:underline">编辑</button></td></tr>
+                <tr><td><span class="badge bg-[#722ED1]/10 text-[#722ED1]">V5</span></td><td>钻石代理</td><td>500</td><td>50%</td><td>25%</td><td>10%</td><td><button class="text-[#1677FF] text-xs hover:underline">编辑</button></td></tr>
+              </tbody></table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ====== Commissions Page ====== -->
+        <div class="page" id="admin-commissions">
+          <div class="space-y-5">
+            <div><h1 class="text-xl font-semibold text-[#000]">佣金明细</h1><p class="text-sm text-[#999] mt-1">查看全部佣金记录</p></div>
+            <div class="grid grid-cols-3 gap-4">
+              <div class="bg-white rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] p-4"><p class="text-xs text-[#666]">累计佣金</p><p class="text-2xl font-bold text-[#F5222D] mt-1">¥38,560.00</p></div>
+              <div class="bg-white rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] p-4"><p class="text-xs text-[#666]">本月佣金</p><p class="text-2xl font-bold text-[#1677FF] mt-1">¥5,820.00</p></div>
+              <div class="bg-white rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] p-4"><p class="text-xs text-[#666]">待结算</p><p class="text-2xl font-bold text-[#854F0B] mt-1">¥1,230.00</p></div>
+            </div>
+            <div class="bg-white rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] p-5">
+              <table><thead><tr><th>订单号</th><th>代理人</th><th>佣金级别</th><th>金额</th><th>状态</th><th>时间</th></tr></thead><tbody>
+                <tr><td>XBKM20260812001</td><td>张三</td><td>一级</td><td class="text-[#F5222D] font-medium">¥30.00</td><td><span class="badge bg-[#52C41A]/10 text-[#52C41A]">已结算</span></td><td>2026-08-12 10:30</td></tr>
+                <tr><td>XBKM20260812001</td><td>李四</td><td>二级</td><td class="text-[#F5222D] font-medium">¥15.00</td><td><span class="badge bg-[#52C41A]/10 text-[#52C41A]">已结算</span></td><td>2026-08-12 10:30</td></tr>
+                <tr><td>XBKM20260812002</td><td>张三</td><td>一级</td><td class="text-[#F5222D] font-medium">¥45.00</td><td><span class="badge bg-[#FA541C]/10 text-[#FA541C]">待结算</span></td><td>2026-08-12 09:15</td></tr>
+              </tbody></table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ====== Withdrawals Page ====== -->
+        <div class="page" id="admin-withdrawals">
+          <div class="space-y-5">
+            <div><h1 class="text-xl font-semibold text-[#000]">提现管理</h1><p class="text-sm text-[#999] mt-1">审核代理提现申请</p></div>
+            <div class="bg-white rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] p-5">
+              <table><thead><tr><th>提现编号</th><th>代理人</th><th>金额</th><th>收款方式</th><th>状态</th><th>申请时间</th><th>操作</th></tr></thead><tbody>
+                <tr><td>TX20260812001</td><td>张三</td><td class="text-[#F5222D] font-medium">¥2,000.00</td><td>微信</td><td><span class="badge bg-[#FA541C]/10 text-[#FA541C]">待审核</span></td><td>2026-08-12 08:00</td><td><button class="btn-primary text-xs px-3 py-1">通过</button> <button class="btn-ghost text-xs px-3 py-1 ml-1">驳回</button></td></tr>
+                <tr><td>TX20260811002</td><td>李四</td><td class="text-[#F5222D] font-medium">¥1,500.00</td><td>支付宝</td><td><span class="badge bg-[#FA541C]/10 text-[#FA541C]">待审核</span></td><td>2026-08-11 14:00</td><td><button class="btn-primary text-xs px-3 py-1">通过</button> <button class="btn-ghost text-xs px-3 py-1 ml-1">驳回</button></td></tr>
+                <tr><td>TX20260810003</td><td>王五</td><td class="text-[#F5222D] font-medium">¥800.00</td><td>银行卡</td><td><span class="badge bg-[#52C41A]/10 text-[#52C41A]">已通过</span></td><td>2026-08-10 10:00</td><td><button class="text-[#1677FF] text-xs hover:underline">查看</button></td></tr>
+              </tbody></table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ====== Finance Page ====== -->
+        <div class="page" id="admin-finance">
+          <div class="space-y-5">
+            <div><h1 class="text-xl font-semibold text-[#000]">财务管理</h1><p class="text-sm text-[#999] mt-1">平台财务概览</p></div>
+            <div class="grid grid-cols-4 gap-4">
+              <div class="bg-white rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] p-4"><p class="text-xs text-[#666]">平台总收入</p><p class="text-2xl font-bold text-[#F5222D] mt-1">¥128,560.00</p></div>
+              <div class="bg-white rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] p-4"><p class="text-xs text-[#666]">已付佣金</p><p class="text-2xl font-bold text-[#1677FF] mt-1">¥38,560.00</p></div>
+              <div class="bg-white rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] p-4"><p class="text-xs text-[#666]">待付佣金</p><p class="text-2xl font-bold text-[#854F0B] mt-1">¥5,820.00</p></div>
+              <div class="bg-white rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] p-4"><p class="text-xs text-[#666]">平台利润</p><p class="text-2xl font-bold text-[#52C41A] mt-1">¥84,180.00</p></div>
+            </div>
+            <div class="bg-white rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] p-5">
+              <p class="text-base font-medium mb-4">收支明细</p>
+              <table><thead><tr><th>类型</th><th>描述</th><th>金额</th><th>时间</th></tr></thead><tbody>
+                <tr><td><span class="badge bg-[#52C41A]/10 text-[#52C41A]">收入</span></td><td>订单 XBKM20260812001</td><td class="text-[#F5222D] font-medium">+¥99.00</td><td>2026-08-12 10:30</td></tr>
+                <tr><td><span class="badge bg-[#FA541C]/10 text-[#FA541C]">支出</span></td><td>佣金结算 - 张三</td><td class="text-[#52C41A] font-medium">-¥30.00</td><td>2026-08-12 10:31</td></tr>
+                <tr><td><span class="badge bg-[#FA541C]/10 text-[#FA541C]">支出</span></td><td>提现 - 王五</td><td class="text-[#52C41A] font-medium">-¥800.00</td><td>2026-08-10 10:05</td></tr>
+              </tbody></table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ====== System Page ====== -->
+        <div class="page" id="admin-system">
+          <div class="space-y-5">
+            <div class="flex items-center justify-between"><div><h1 class="text-xl font-semibold text-[#000]">系统管理</h1><p class="text-sm text-[#999] mt-1">配置系统参数</p></div><button class="btn-primary">初始化配置</button></div>
+            <div class="grid grid-cols-2 gap-5">
+              <div class="bg-white rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] p-5">
+                <p class="text-base font-medium mb-4">系统基础配置</p>
+                <div class="space-y-3">
+                  <div class="flex items-center gap-3"><label class="w-28 text-sm text-[#666] shrink-0">site_name</label><input class="input-field flex-1" value="小白卡盟"></div>
+                  <div class="flex items-center gap-3"><label class="w-28 text-sm text-[#666] shrink-0">site_description</label><input class="input-field flex-1" value="专业号卡分销平台"></div>
+                  <div class="flex items-center gap-3"><label class="w-28 text-sm text-[#666] shrink-0">contact_phone</label><input class="input-field flex-1" value="400-888-8888"></div>
+                  <div class="flex items-center gap-3"><label class="w-28 text-sm text-[#666] shrink-0">contact_email</label><input class="input-field flex-1" value="support@xbkm.com"></div>
+                </div>
+                <button class="btn-primary mt-4">保存</button>
+              </div>
+              <div class="bg-white rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] p-5">
+                <p class="text-base font-medium mb-4">佣金配置</p>
+                <div class="space-y-3">
+                  <div class="flex items-center gap-3"><label class="w-28 text-sm text-[#666] shrink-0">一级佣金比例</label><input class="input-field flex-1" value="30">%</div>
+                  <div class="flex items-center gap-3"><label class="w-28 text-sm text-[#666] shrink-0">二级佣金比例</label><input class="input-field flex-1" value="15">%</div>
+                  <div class="flex items-center gap-3"><label class="w-28 text-sm text-[#666] shrink-0">三级佣金比例</label><input class="input-field flex-1" value="5">%</div>
+                  <div class="flex items-center gap-3"><label class="w-28 text-sm text-[#666] shrink-0">最低提现金额</label><input class="input-field flex-1" value="10">元</div>
+                </div>
+                <button class="btn-primary mt-4">保存</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+</div>
+
+<!-- ====================================================== -->
+<!-- ============ AGENT PANEL ============================= -->
+<!-- ====================================================== -->
+<div id="panel-agent" class="panel min-h-screen pt-12">
+  <div class="flex min-h-[calc(100vh-48px)]">
+    <aside class="w-60 bg-[#0C1A2E] text-white flex flex-col shrink-0">
+      <div class="h-16 px-5 flex items-center gap-3 border-b border-white/8 shrink-0">
+        <div class="h-9 w-9 rounded-lg bg-[#1677FF] flex items-center justify-center"><svg class="ico-lg" viewBox="0 0 24 24"><path d="M21 10V8a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h4"/><path d="m16 12 4 4-4 4"/><path d="M20 16H10"/></svg></div>
+        <div><h1 class="text-base font-semibold leading-tight">小白卡盟</h1><p class="text-[11px] text-white/40 leading-tight">代理中心</p></div>
+      </div>
+      <nav class="flex-1 py-3 overflow-y-auto" id="agent-nav">
+        <div class="mb-1"><p class="px-5 py-1.5 text-[11px] font-medium text-white/30 uppercase tracking-wide">工作台</p>
+          <a onclick="navPage('agent','dashboard')" data-page="dashboard" class="nav-item flex items-center gap-3 mx-2 px-3 py-2.5 rounded-lg text-[13px] cursor-pointer menu-active"><svg class="ico" viewBox="0 0 24 24"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>我的看板</a>
+        </div>
+        <div class="mb-1"><p class="px-5 py-1.5 text-[11px] font-medium text-white/30 uppercase tracking-wide">业务管理</p>
+          <a onclick="navPage('agent','products')" data-page="products" class="nav-item flex items-center gap-3 mx-2 px-3 py-2.5 rounded-lg text-[13px] cursor-pointer menu-inactive"><svg class="ico" viewBox="0 0 24 24"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/></svg>号卡列表</a>
+          <a onclick="navPage('agent','orders')" data-page="orders" class="nav-item flex items-center gap-3 mx-2 px-3 py-2.5 rounded-lg text-[13px] cursor-pointer menu-inactive"><svg class="ico" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>我的订单</a>
+          <a onclick="navPage('agent','report')" data-page="report" class="nav-item flex items-center gap-3 mx-2 px-3 py-2.5 rounded-lg text-[13px] cursor-pointer menu-inactive"><svg class="ico" viewBox="0 0 24 24"><rect width="8" height="4" x="8" y="2" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg>号卡报单</a>
+        </div>
+        <div class="mb-1"><p class="px-5 py-1.5 text-[11px] font-medium text-white/30 uppercase tracking-wide">团队与收益</p>
+          <a onclick="navPage('agent','team')" data-page="team" class="nav-item flex items-center gap-3 mx-2 px-3 py-2.5 rounded-lg text-[13px] cursor-pointer menu-inactive"><svg class="ico" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/></svg>我的团队</a>
+          <a onclick="navPage('agent','commissions')" data-page="commissions" class="nav-item flex items-center gap-3 mx-2 px-3 py-2.5 rounded-lg text-[13px] cursor-pointer menu-inactive"><svg class="ico" viewBox="0 0 24 24"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M8 7h8"/><path d="M8 11h8"/></svg>佣金明细</a>
+          <a onclick="navPage('agent','withdraw')" data-page="withdraw" class="nav-item flex items-center gap-3 mx-2 px-3 py-2.5 rounded-lg text-[13px] cursor-pointer menu-inactive"><svg class="ico" viewBox="0 0 24 24"><path d="M12 2v20"/><path d="m17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>提现管理</a>
+          <a onclick="navPage('agent','invite')" data-page="invite" class="nav-item flex items-center gap-3 mx-2 px-3 py-2.5 rounded-lg text-[13px] cursor-pointer menu-inactive"><svg class="ico" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>邀请管理</a>
+        </div>
+        <div class="mb-1"><p class="px-5 py-1.5 text-[11px] font-medium text-white/30 uppercase tracking-wide">账户</p>
+          <a onclick="navPage('agent','profile')" data-page="profile" class="nav-item flex items-center gap-3 mx-2 px-3 py-2.5 rounded-lg text-[13px] cursor-pointer menu-inactive"><svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/></svg>个人资料</a>
+        </div>
+      </nav>
+      <div class="p-3 border-t border-white/8 shrink-0">
+        <div class="flex items-center gap-3 px-3 py-2 mb-2 rounded-lg hover:bg-white/8 cursor-pointer"><div class="h-9 w-9 rounded-full bg-[#1677FF] flex items-center justify-center text-sm font-semibold">张</div><div><p class="text-sm font-medium truncate">张三</p><p class="text-[11px] text-white/40 truncate">V5 钻石代理</p></div></div>
+        <button class="w-full flex items-center gap-2 px-3 py-2 text-[13px] text-white/50 hover:text-white hover:bg-white/8 rounded-lg"><svg class="ico-sm" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>退出登录</button>
+      </div>
+    </aside>
+
+    <div class="flex-1 flex flex-col min-w-0">
+      <header class="h-16 bg-white border-b border-[#E5E7EB] flex items-center px-6 sticky top-12 z-30">
+        <div class="flex items-center gap-2 text-[13px]"><span class="text-[#999]">首页</span><svg class="ico-sm text-[#ccc]" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg><span class="text-[#333] font-medium" id="agent-breadcrumb">我的看板</span></div>
+        <div class="flex-1"></div>
+        <div class="flex items-center gap-3"><button class="relative p-2 rounded-lg hover:bg-[#F5F7FA]"><svg class="ico-lg text-[#666]" viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="absolute top-1.5 right-1.5 h-2 w-2 bg-[#F5222D] rounded-full"></span></button><div class="h-8 w-8 rounded-full bg-[#1677FF] flex items-center justify-center text-sm font-medium text-white">张</div></div>
+      </header>
+      <main class="flex-1 p-6 overflow-auto main-scroll" id="agent-content">
+
+        <!-- Dashboard -->
+        <div class="page active" id="agent-dashboard">
+          <div class="space-y-5">
+            <div><h1 class="text-xl font-semibold text-[#000]">我的看板</h1><p class="text-sm text-[#999] mt-1">欢迎回来，张三</p></div>
+            <div class="grid grid-cols-3 gap-4">
+              <div class="bg-[#0C1A2E] rounded-xl p-5"><div class="flex items-center justify-between mb-3"><p class="text-xs text-white/50">累计收益 (元)</p><div class="h-8 w-8 rounded-lg bg-white/10 flex items-center justify-center"><svg class="ico-lg text-[#1677FF]" viewBox="0 0 24 24"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></svg></div></div><p class="text-2xl font-bold font-mono text-white">¥12,580.00</p><div class="flex items-center gap-1 mt-2"><svg class="ico-sm text-[#52C41A]" viewBox="0 0 24 24"><path d="m6 9 6-6 6 6"/><path d="M12 3v18"/></svg><span class="text-xs text-[#52C41A]">+15% 较上月</span></div><div class="grid grid-cols-2 gap-3 mt-4 pt-4 border-t border-white/10"><div><p class="text-[11px] text-white/40">本年度收益</p><p class="text-sm font-bold font-mono text-white mt-0.5">¥8,200.00</p></div><div><p class="text-[11px] text-white/40">昨日收益</p><p class="text-sm font-bold font-mono text-white mt-0.5">¥320.00</p></div></div></div>
+              <div class="col-span-2 grid grid-cols-4 gap-3">
+                <div class="bg-white rounded-xl border border-[#E5E7EB] p-4"><div class="h-9 w-9 rounded-lg bg-[#E6F1FB] flex items-center justify-center mb-2"><svg class="ico-lg text-[#1677FF]" viewBox="0 0 24 24"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/></svg></div><p class="text-2xl font-bold font-mono text-[#000]">8</p><p class="text-xs text-[#999] mt-0.5">今日激活</p></div>
+                <div class="bg-white rounded-xl border border-[#E5E7EB] p-4"><div class="h-9 w-9 rounded-lg bg-[#EAF3DE] flex items-center justify-center mb-2"><svg class="ico-lg text-[#3B6D11]" viewBox="0 0 24 24"><path d="m6 9 6-6 6 6"/><path d="M12 3v18"/></svg></div><p class="text-2xl font-bold font-mono text-[#000]">6</p><p class="text-xs text-[#999] mt-0.5">昨日激活</p></div>
+                <div class="bg-white rounded-xl border border-[#E5E7EB] p-4"><div class="h-9 w-9 rounded-lg bg-[#FAEEDA] flex items-center justify-center mb-2"><svg class="ico-lg text-[#854F0B]" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></div><p class="text-2xl font-bold font-mono text-[#000]">156</p><p class="text-xs text-[#999] mt-0.5">累计激活</p></div>
+                <div class="bg-white rounded-xl border border-[#E5E7EB] p-4"><div class="h-9 w-9 rounded-lg bg-[#EEEDFE] flex items-center justify-center mb-2"><svg class="ico-lg text-[#534AB7]" viewBox="0 0 24 24"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/></svg></div><p class="text-2xl font-bold font-mono text-[#000]">42</p><p class="text-xs text-[#999] mt-0.5">号卡总数</p></div>
+              </div>
+            </div>
+            <div class="bg-white rounded-xl border border-[#E5E7EB] p-5">
+              <p class="text-base font-medium mb-3">快捷操作</p>
+              <div class="grid grid-cols-8 gap-3">
+                <a onclick="navPage('agent','report')" class="flex flex-col items-center gap-2 p-2 rounded-lg hover:bg-[#F5F7FA] cursor-pointer"><div class="h-11 w-11 rounded-xl bg-[#E6F1FB] flex items-center justify-center text-[#1677FF]"><svg class="ico-lg" viewBox="0 0 24 24"><rect width="8" height="4" x="8" y="2" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg></div><span class="text-xs text-[#666]">号卡报单</span></a>
+                <a onclick="navPage('agent','products')" class="flex flex-col items-center gap-2 p-2 rounded-lg hover:bg-[#F5F7FA] cursor-pointer"><div class="h-11 w-11 rounded-xl bg-[#E1F5EE] flex items-center justify-center text-[#0F6E56]"><svg class="ico-lg" viewBox="0 0 24 24"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/></svg></div><span class="text-xs text-[#666]">号卡列表</span></a>
+                <a onclick="navPage('agent','orders')" class="flex flex-col items-center gap-2 p-2 rounded-lg hover:bg-[#F5F7FA] cursor-pointer"><div class="h-11 w-11 rounded-xl bg-[#FAEEDA] flex items-center justify-center text-[#854F0B]"><svg class="ico-lg" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><span class="text-xs text-[#666]">我的订单</span></a>
+                <a onclick="navPage('agent','team')" class="flex flex-col items-center gap-2 p-2 rounded-lg hover:bg-[#F5F7FA] cursor-pointer"><div class="h-11 w-11 rounded-xl bg-[#EEEDFE] flex items-center justify-center text-[#534AB7]"><svg class="ico-lg" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div><span class="text-xs text-[#666]">我的团队</span></a>
+                <a onclick="navPage('agent','withdraw')" class="flex flex-col items-center gap-2 p-2 rounded-lg hover:bg-[#F5F7FA] cursor-pointer"><div class="h-11 w-11 rounded-xl bg-[#FAECE7] flex items-center justify-center text-[#993C1D]"><svg class="ico-lg" viewBox="0 0 24 24"><path d="M12 2v20"/><path d="m17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div><span class="text-xs text-[#666]">提现管理</span></a>
+                <a onclick="navPage('agent','commissions')" class="flex flex-col items-center gap-2 p-2 rounded-lg hover:bg-[#F5F7FA] cursor-pointer"><div class="h-11 w-11 rounded-xl bg-[#E6F1FB] flex items-center justify-center text-[#185FA5]"><svg class="ico-lg" viewBox="0 0 24 24"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M8 7h8"/><path d="M8 11h8"/></svg></div><span class="text-xs text-[#666]">佣金明细</span></a>
+                <a onclick="navPage('agent','invite')" class="flex flex-col items-center gap-2 p-2 rounded-lg hover:bg-[#F5F7FA] cursor-pointer"><div class="h-11 w-11 rounded-xl bg-[#E1F5EE] flex items-center justify-center text-[#1D9E75]"><svg class="ico-lg" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></div><span class="text-xs text-[#666]">邀请管理</span></a>
+                <a onclick="navPage('agent','profile')" class="flex flex-col items-center gap-2 p-2 rounded-lg hover:bg-[#F5F7FA] cursor-pointer"><div class="h-11 w-11 rounded-xl bg-[#F1EFE8] flex items-center justify-center text-[#5F5E5A]"><svg class="ico-lg" viewBox="0 0 24 24"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/></svg></div><span class="text-xs text-[#666]">个人资料</span></a>
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+              <div class="bg-white rounded-xl border border-[#E5E7EB] p-5"><div class="flex items-center justify-between mb-3"><p class="text-base font-medium">近期收益</p><span onclick="navPage('agent','commissions')" class="text-xs text-[#1677FF] cursor-pointer hover:underline">查看全部</span></div><div class="h-48 flex items-center justify-center"><div class="text-center"><div class="h-12 w-12 rounded-full bg-[#F5F7FA] flex items-center justify-center mx-auto mb-3"><svg class="ico-lg text-[#ccc]" viewBox="0 0 24 24"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/></svg></div><p class="text-sm text-[#999]">推广号卡后收益展示在这里</p></div></div></div>
+              <div class="bg-white rounded-xl border border-[#E5E7EB] p-5"><p class="text-base font-medium mb-3">推广与邀请</p><div class="space-y-3"><div class="flex items-center justify-between p-3 bg-[#F5F7FA] rounded-lg"><div><p class="text-xs text-[#999]">我的邀请码</p><p class="font-mono font-semibold text-[#000] mt-0.5">XB888888</p></div><button class="px-3 py-1.5 rounded-md text-xs font-medium bg-[#1677FF] text-white">复制</button></div><div class="flex items-center justify-between p-3 bg-[#F5F7FA] rounded-lg"><div class="min-w-0 flex-1"><p class="text-xs text-[#999]">推广店铺链接</p><p class="text-xs text-[#666] mt-0.5 truncate">https://xbkm.com/customer?ref=XB888888</p></div><button class="px-3 py-1.5 rounded-md text-xs font-medium bg-[#1677FF] text-white shrink-0 ml-2">复制</button></div><a onclick="navPage('agent','invite')" class="flex items-center justify-between p-3 bg-[#E6F1FB] rounded-lg hover:bg-[#B5D4F4] transition-colors cursor-pointer"><div class="flex items-center gap-2"><svg class="ico-sm text-[#1677FF]" viewBox="0 0 24 24"><rect width="5" height="5" x="3" y="3" rx="1"/><rect width="5" height="5" x="16" y="3" rx="1"/><rect width="5" height="5" x="3" y="16" rx="1"/><rect width="5" height="5" x="16" y="16" rx="1"/><path d="M8 8h4"/><path d="M8 18h4"/><path d="M18 8v4"/><path d="M8 12h4"/></svg><span class="text-sm text-[#1677FF] font-medium">生成推广海报</span></div><svg class="ico-sm text-[#1677FF]" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></a></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Products -->
+        <div class="page" id="agent-products">
+          <div class="space-y-5">
+            <div><h1 class="text-xl font-semibold text-[#000]">号卡列表</h1><p class="text-sm text-[#999] mt-1">可推广的号卡产品</p></div>
+            <div class="grid grid-cols-3 gap-4">
+              <div class="bg-white rounded-xl border border-[#E5E7EB] overflow-hidden"><div class="h-24 bg-gradient-to-r from-[#1677FF] to-[#0d6efd] flex items-center justify-center"><svg class="ico-lg text-white" viewBox="0 0 24 24"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg></div><div class="p-4"><p class="text-sm font-medium text-[#000]">联通惠派卡</p><p class="text-xs text-[#999] mt-1">月租9元 | 3GB流量</p><div class="flex items-center justify-between mt-3"><span class="text-lg font-bold text-[#F5222D]">¥9<small class="text-xs text-[#999]">/月</small></span><button class="btn-primary text-xs px-3 py-1.5">推广</button></div></div></div>
+              <div class="bg-white rounded-xl border border-[#E5E7EB] overflow-hidden"><div class="h-24 bg-gradient-to-r from-[#52C41A] to-[#3B6D11] flex items-center justify-center"><svg class="ico-lg text-white" viewBox="0 0 24 24"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg></div><div class="p-4"><p class="text-sm font-medium text-[#000]">移动花卡</p><p class="text-xs text-[#999] mt-1">月租19元 | 10GB流量</p><div class="flex items-center justify-between mt-3"><span class="text-lg font-bold text-[#F5222D]">¥19<small class="text-xs text-[#999]">/月</small></span><button class="btn-primary text-xs px-3 py-1.5">推广</button></div></div></div>
+              <div class="bg-white rounded-xl border border-[#E5E7EB] overflow-hidden"><div class="h-24 bg-gradient-to-r from-[#722ED1] to-[#534AB7] flex items-center justify-center"><svg class="ico-lg text-white" viewBox="0 0 24 24"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg></div><div class="p-4"><p class="text-sm font-medium text-[#000]">电信星卡</p><p class="text-xs text-[#999] mt-1">月租29元 | 20GB流量</p><div class="flex items-center justify-between mt-3"><span class="text-lg font-bold text-[#F5222D]">¥29<small class="text-xs text-[#999]">/月</small></span><button class="btn-primary text-xs px-3 py-1.5">推广</button></div></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Orders -->
+        <div class="page" id="agent-orders">
+          <div class="space-y-5">
+            <div><h1 class="text-xl font-semibold text-[#000]">我的订单</h1><p class="text-sm text-[#999] mt-1">查看推广订单</p></div>
+            <div class="bg-white rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] p-5">
+              <div class="flex gap-3 mb-4"><input class="input-field flex-1" placeholder="搜索订单号..."><select class="input-field"><option>全部状态</option><option>待审核</option><option>已开卡</option><option>已完成</option></select><button class="btn-primary">查询</button></div>
+              <table><thead><tr><th>订单号</th><th>号卡</th><th>客户姓名</th><th>金额</th><th>佣金</th><th>状态</th><th>时间</th></tr></thead><tbody>
+                <tr><td>XBKM20260812001</td><td>联通惠派卡</td><td>周八</td><td>¥99.00</td><td class="text-[#F5222D] font-medium">¥30.00</td><td><span class="badge bg-[#1677FF]/10 text-[#1677FF]">已开卡</span></td><td>2026-08-12</td></tr>
+                <tr><td>XBKM20260811002</td><td>移动花卡</td><td>吴九</td><td>¥129.00</td><td class="text-[#F5222D] font-medium">¥45.00</td><td><span class="badge bg-[#52C41A]/10 text-[#52C41A]">已完成</span></td><td>2026-08-11</td></tr>
+                <tr><td>XBKM20260810003</td><td>电信星卡</td><td>郑十</td><td>¥89.00</td><td class="text-[#F5222D] font-medium">¥55.00</td><td><span class="badge bg-[#FA541C]/10 text-[#FA541C]">待审核</span></td><td>2026-08-10</td></tr>
+              </tbody></table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Report -->
+        <div class="page" id="agent-report">
+          <div class="space-y-5">
+            <div><h1 class="text-xl font-semibold text-[#000]">号卡报单</h1><p class="text-sm text-[#999] mt-1">提交号卡办理报单</p></div>
+            <div class="bg-white rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] p-5 max-w-2xl">
+              <div class="space-y-4">
+                <div><label class="text-sm text-[#666] block mb-1.5">选择号卡</label><select class="input-field w-full"><option>联通惠派卡 - ¥9/月</option><option>移动花卡 - ¥19/月</option><option>电信星卡 - ¥29/月</option></select></div>
+                <div><label class="text-sm text-[#666] block mb-1.5">客户姓名</label><input class="input-field w-full" placeholder="请输入客户姓名"></div>
+                <div><label class="text-sm text-[#666] block mb-1.5">客户手机号</label><input class="input-field w-full" placeholder="请输入客户手机号"></div>
+                <div><label class="text-sm text-[#666] block mb-1.5">身份证号</label><input class="input-field w-full" placeholder="请输入身份证号"></div>
+                <div><label class="text-sm text-[#666] block mb-1.5">收货地址</label><textarea class="input-field w-full" rows="3" placeholder="请输入收货地址"></textarea></div>
+                <button class="btn-primary w-full">提交报单</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Team -->
+        <div class="page" id="agent-team">
+          <div class="space-y-5">
+            <div><h1 class="text-xl font-semibold text-[#000]">我的团队</h1><p class="text-sm text-[#999] mt-1">团队成员概览</p></div>
+            <div class="grid grid-cols-3 gap-4">
+              <div class="bg-white rounded-xl border border-[#E5E7EB] p-4 text-center"><p class="text-2xl font-bold font-mono text-[#1677FF]">25</p><p class="text-xs text-[#999] mt-1">团队总人数</p></div>
+              <div class="bg-white rounded-xl border border-[#E5E7EB] p-4 text-center"><p class="text-2xl font-bold font-mono text-[#52C41A]">3</p><p class="text-xs text-[#999] mt-1">今日新增</p></div>
+              <div class="bg-white rounded-xl border border-[#E5E7EB] p-4 text-center"><p class="text-2xl font-bold font-mono text-[#854F0B]">18</p><p class="text-xs text-[#999] mt-1">直推人数</p></div>
+            </div>
+            <div class="bg-white rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] p-5">
+              <table><thead><tr><th>代理姓名</th><th>手机号</th><th>等级</th><th>关系</th><th>累计销售额</th><th>加入时间</th></tr></thead><tbody>
+                <tr><td>李四</td><td>139****6666</td><td><span class="badge bg-[#FA541C]/10 text-[#FA541C]">V4 金牌</span></td><td>直推</td><td class="text-[#F5222D]">¥8,920.00</td><td>2026-06-15</td></tr>
+                <tr><td>王五</td><td>137****7777</td><td><span class="badge bg-[#1677FF]/10 text-[#1677FF]">V3 银牌</span></td><td>直推</td><td class="text-[#F5222D]">¥6,350.00</td><td>2026-07-01</td></tr>
+                <tr><td>赵六</td><td>135****5555</td><td><span class="badge bg-[#52C41A]/10 text-[#52C41A]">V2 铜牌</span></td><td>间推</td><td class="text-[#F5222D]">¥2,100.00</td><td>2026-07-20</td></tr>
+              </tbody></table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Commissions -->
+        <div class="page" id="agent-commissions">
+          <div class="space-y-5">
+            <div><h1 class="text-xl font-semibold text-[#000]">佣金明细</h1><p class="text-sm text-[#999] mt-1">我的佣金记录</p></div>
+            <div class="grid grid-cols-3 gap-4">
+              <div class="bg-white rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] p-4"><p class="text-xs text-[#666]">累计佣金</p><p class="text-2xl font-bold text-[#F5222D] mt-1">¥12,580.00</p></div>
+              <div class="bg-white rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] p-4"><p class="text-xs text-[#666]">本月佣金</p><p class="text-2xl font-bold text-[#1677FF] mt-1">¥1,820.00</p></div>
+              <div class="bg-white rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] p-4"><p class="text-xs text-[#666]">可提现</p><p class="text-2xl font-bold text-[#52C41A] mt-1">¥3,200.00</p></div>
+            </div>
+            <div class="bg-white rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] p-5">
+              <table><thead><tr><th>订单号</th><th>佣金级别</th><th>金额</th><th>状态</th><th>时间</th></tr></thead><tbody>
+                <tr><td>XBKM20260812001</td><td><span class="badge bg-[#1677FF]/10 text-[#1677FF]">一级</span></td><td class="text-[#F5222D] font-medium">¥30.00</td><td><span class="badge bg-[#52C41A]/10 text-[#52C41A]">已结算</span></td><td>2026-08-12</td></tr>
+                <tr><td>XBKM20260811002</td><td><span class="badge bg-[#FA541C]/10 text-[#FA541C]">二级</span></td><td class="text-[#F5222D] font-medium">¥15.00</td><td><span class="badge bg-[#52C41A]/10 text-[#52C41A]">已结算</span></td><td>2026-08-11</td></tr>
+                <tr><td>XBKM20260810003</td><td><span class="badge bg-[#722ED1]/10 text-[#722ED1]">三级</span></td><td class="text-[#F5222D] font-medium">¥5.00</td><td><span class="badge bg-[#FA541C]/10 text-[#FA541C]">待结算</span></td><td>2026-08-10</td></tr>
+              </tbody></table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Withdraw -->
+        <div class="page" id="agent-withdraw">
+          <div class="space-y-5">
+            <div><h1 class="text-xl font-semibold text-[#000]">提现管理</h1><p class="text-sm text-[#999] mt-1">申请提现与管理记录</p></div>
+            <div class="grid grid-cols-3 gap-4">
+              <div class="bg-white rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] p-4"><p class="text-xs text-[#666]">账户余额</p><p class="text-2xl font-bold text-[#1677FF] mt-1">¥3,200.00</p></div>
+              <div class="bg-white rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] p-4"><p class="text-xs text-[#666]">累计提现</p><p class="text-2xl font-bold text-[#52C41A] mt-1">¥9,380.00</p></div>
+              <div class="bg-white rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] p-4"><p class="text-xs text-[#666]">处理中</p><p class="text-2xl font-bold text-[#854F0B] mt-1">¥2,000.00</p></div>
+            </div>
+            <div class="bg-white rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] p-5 max-w-md">
+              <p class="text-base font-medium mb-4">申请提现</p>
+              <div class="space-y-4">
+                <div><label class="text-sm text-[#666] block mb-1.5">提现金额</label><input class="input-field w-full" placeholder="最低提现10元" value="2000"></div>
+                <div><label class="text-sm text-[#666] block mb-1.5">收款方式</label><select class="input-field w-full"><option>微信</option><option>支付宝</option><option>银行卡</option></select></div>
+                <button class="btn-primary w-full">提交申请</button>
+              </div>
+            </div>
+            <div class="bg-white rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] p-5">
+              <p class="text-base font-medium mb-4">提现记录</p>
+              <table><thead><tr><th>提现编号</th><th>金额</th><th>收款方式</th><th>状态</th><th>时间</th></tr></thead><tbody>
+                <tr><td>TX20260812001</td><td class="text-[#F5222D] font-medium">¥2,000.00</td><td>微信</td><td><span class="badge bg-[#FA541C]/10 text-[#FA541C]">待审核</span></td><td>2026-08-12</td></tr>
+                <tr><td>TX20260805002</td><td class="text-[#F5222D] font-medium">¥3,000.00</td><td>支付宝</td><td><span class="badge bg-[#52C41A]/10 text-[#52C41A]">已到账</span></td><td>2026-08-05</td></tr>
+              </tbody></table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Invite -->
+        <div class="page" id="agent-invite">
+          <div class="space-y-5">
+            <div><h1 class="text-xl font-semibold text-[#000]">邀请管理</h1><p class="text-sm text-[#999] mt-1">邀请代理与推广管理</p></div>
+            <div class="grid grid-cols-2 gap-4">
+              <div class="bg-white rounded-xl border border-[#E5E7EB] p-5">
+                <p class="text-base font-medium mb-4">我的邀请码</p>
+                <div class="flex items-center justify-between p-4 bg-[#F5F7FA] rounded-lg"><div><p class="text-xs text-[#999]">邀请码</p><p class="text-2xl font-bold font-mono text-[#1677FF] mt-1">XB888888</p></div><button class="btn-primary">复制邀请码</button></div>
+                <div class="mt-4 p-4 bg-[#F5F7FA] rounded-lg"><p class="text-xs text-[#999]">推广链接</p><p class="text-xs text-[#666] mt-1 truncate">https://xbkm.com/customer?ref=XB888888</p><button class="btn-primary mt-3 w-full">复制推广链接</button></div>
+              </div>
+              <div class="bg-white rounded-xl border border-[#E5E7EB] p-5">
+                <p class="text-base font-medium mb-4">邀请统计</p>
+                <div class="space-y-3">
+                  <div class="flex items-center justify-between p-3 bg-[#E6F1FB] rounded-lg"><span class="text-sm text-[#333]">总邀请人数</span><span class="text-xl font-bold text-[#1677FF]">18</span></div>
+                  <div class="flex items-center justify-between p-3 bg-[#E1F5EE] rounded-lg"><span class="text-sm text-[#333]">已注册</span><span class="text-xl font-bold text-[#0F6E56]">15</span></div>
+                  <div class="flex items-center justify-between p-3 bg-[#FAEEDA] rounded-lg"><span class="text-sm text-[#333]">待注册</span><span class="text-xl font-bold text-[#854F0B]">3</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Profile -->
+        <div class="page" id="agent-profile">
+          <div class="space-y-5">
+            <div><h1 class="text-xl font-semibold text-[#000]">个人资料</h1><p class="text-sm text-[#999] mt-1">管理个人信息</p></div>
+            <div class="bg-white rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] p-5 max-w-2xl">
+              <div class="flex items-center gap-4 mb-6 pb-6 border-b border-[#E5E7EB]">
+                <div class="h-16 w-16 rounded-full bg-[#1677FF] flex items-center justify-center text-2xl font-bold text-white">张</div>
+                <div><p class="text-lg font-semibold text-[#000]">张三</p><p class="text-sm text-[#999]">V5 钻石代理</p></div>
+              </div>
+              <div class="space-y-4">
+                <div class="flex items-center gap-3"><label class="w-24 text-sm text-[#666] shrink-0">姓名</label><input class="input-field flex-1" value="张三"></div>
+                <div class="flex items-center gap-3"><label class="w-24 text-sm text-[#666] shrink-0">手机号</label><input class="input-field flex-1" value="138****8888"></div>
+                <div class="flex items-center gap-3"><label class="w-24 text-sm text-[#666] shrink-0">邮箱</label><input class="input-field flex-1" value="zhangsan@example.com"></div>
+                <div class="flex items-center gap-3"><label class="w-24 text-sm text-[#666] shrink-0">邀请码</label><input class="input-field flex-1 bg-[#F5F7FA]" value="XB888888" disabled></div>
+                <div class="flex items-center gap-3"><label class="w-24 text-sm text-[#666] shrink-0">账户余额</label><input class="input-field flex-1 bg-[#F5F7FA]" value="¥3,200.00" disabled></div>
+                <button class="btn-primary">保存修改</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+</div>
+
+<!-- ====================================================== -->
+<!-- ============ CHANNEL PANEL =========================== -->
+<!-- ====================================================== -->
+<div id="panel-channel" class="panel min-h-screen pt-12">
+  <div class="flex min-h-[calc(100vh-48px)]">
+    <aside class="w-60 bg-[#0C1A2E] text-white flex flex-col shrink-0">
+      <div class="h-16 px-5 flex items-center gap-3 border-b border-white/8 shrink-0">
+        <div class="h-9 w-9 rounded-lg bg-[#1677FF] flex items-center justify-center"><svg class="ico-lg" viewBox="0 0 24 24"><path d="M21 10V8a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h4"/><path d="m16 12 4 4-4 4"/><path d="M20 16H10"/></svg></div>
+        <div><h1 class="text-base font-semibold leading-tight">小白卡盟</h1><p class="text-[11px] text-white/40 leading-tight">渠道中心</p></div>
+      </div>
+      <nav class="flex-1 py-3 overflow-y-auto" id="channel-nav">
+        <div class="mb-1"><p class="px-5 py-1.5 text-[11px] font-medium text-white/30 uppercase tracking-wide">工作台</p>
+          <a onclick="navPage('channel','dashboard')" data-page="dashboard" class="nav-item flex items-center gap-3 mx-2 px-3 py-2.5 rounded-lg text-[13px] cursor-pointer menu-active"><svg class="ico" viewBox="0 0 24 24"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>工作台</a>
+        </div>
+        <div class="mb-1"><p class="px-5 py-1.5 text-[11px] font-medium text-white/30 uppercase tracking-wide">业务管理</p>
+          <a onclick="navPage('channel','orders')" data-page="orders" class="nav-item flex items-center gap-3 mx-2 px-3 py-2.5 rounded-lg text-[13px] cursor-pointer menu-inactive"><svg class="ico" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>订单管理</a>
+          <a onclick="navPage('channel','audit')" data-page="audit" class="nav-item flex items-center gap-3 mx-2 px-3 py-2.5 rounded-lg text-[13px] cursor-pointer menu-inactive"><svg class="ico" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>订单审核</a>
+        </div>
+      </nav>
+      <div class="p-3 border-t border-white/8 shrink-0">
+        <div class="flex items-center gap-3 px-3 py-2 mb-2 rounded-lg hover:bg-white/8 cursor-pointer"><div class="h-9 w-9 rounded-full bg-[#1677FF] flex items-center justify-center text-sm font-semibold">渠</div><div><p class="text-sm font-medium truncate">渠道A</p><p class="text-[11px] text-white/40 truncate">渠道方</p></div></div>
+        <button class="w-full flex items-center gap-2 px-3 py-2 text-[13px] text-white/50 hover:text-white hover:bg-white/8 rounded-lg"><svg class="ico-sm" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>退出登录</button>
+      </div>
+    </aside>
+
+    <div class="flex-1 flex flex-col min-w-0">
+      <header class="h-16 bg-white border-b border-[#E5E7EB] flex items-center px-6 sticky top-12 z-30">
+        <div class="flex items-center gap-2 text-[13px]"><span class="text-[#999]">首页</span><svg class="ico-sm text-[#ccc]" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg><span class="text-[#333] font-medium" id="channel-breadcrumb">工作台</span></div>
+        <div class="flex-1"></div>
+        <div class="flex items-center gap-3"><button class="relative p-2 rounded-lg hover:bg-[#F5F7FA]"><svg class="ico-lg text-[#666]" viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></button><div class="h-8 w-8 rounded-full bg-[#1677FF] flex items-center justify-center text-sm font-medium text-white">渠</div></div>
+      </header>
+      <main class="flex-1 p-6 overflow-auto main-scroll" id="channel-content">
+
+        <!-- Dashboard -->
+        <div class="page active" id="channel-dashboard">
+          <div class="space-y-5">
+            <div><h1 class="text-xl font-semibold text-[#000]">工作台</h1><p class="text-sm text-[#999] mt-1">欢迎回来，渠道A</p></div>
+            <div class="grid grid-cols-4 gap-4">
+              <div class="bg-white rounded-xl border border-[#E5E7EB] p-4"><div class="flex items-center justify-between"><div><p class="text-xs text-[#999]">总订单数</p><p class="text-2xl font-bold text-[#1677FF] mt-1">568</p></div><div class="h-10 w-10 rounded-lg bg-[#E6F1FB] flex items-center justify-center"><svg class="ico-lg text-[#1677FF]" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg></div></div></div>
+              <div class="bg-white rounded-xl border border-[#E5E7EB] p-4"><div class="flex items-center justify-between"><div><p class="text-xs text-[#999]">待审核</p><p class="text-2xl font-bold text-[#854F0B] mt-1">12</p></div><div class="h-10 w-10 rounded-lg bg-[#FAEEDA] flex items-center justify-center"><svg class="ico-lg text-[#854F0B]" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div></div></div>
+              <div class="bg-white rounded-xl border border-[#E5E7EB] p-4"><div class="flex items-center justify-between"><div><p class="text-xs text-[#999]">已通过</p><p class="text-2xl font-bold text-[#3B6D11] mt-1">520</p></div><div class="h-10 w-10 rounded-lg bg-[#EAF3DE] flex items-center justify-center"><svg class="ico-lg text-[#3B6D11]" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div></div></div>
+              <div class="bg-white rounded-xl border border-[#E5E7EB] p-4"><div class="flex items-center justify-between"><div><p class="text-xs text-[#999]">已驳回</p><p class="text-2xl font-bold text-[#A32D2D] mt-1">36</p></div><div class="h-10 w-10 rounded-lg bg-[#FCEBEB] flex items-center justify-center"><svg class="ico-lg text-[#A32D2D]" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg></div></div></div>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+              <div class="bg-white rounded-xl border border-[#E5E7EB] p-5">
+                <p class="text-base font-medium mb-3">快捷操作</p>
+                <div class="space-y-3">
+                  <a onclick="navPage('channel','orders')" class="flex items-center justify-between p-4 rounded-lg border border-[#E5E7EB] hover:bg-[#F5F7FA] transition-colors cursor-pointer"><div class="flex items-center gap-3"><div class="h-10 w-10 rounded-lg bg-[#E6F1FB] flex items-center justify-center"><svg class="ico-lg text-[#1677FF]" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg></div><div><p class="text-sm font-medium text-[#000]">订单管理</p><p class="text-xs text-[#999]">查看所有订单</p></div></div><svg class="ico-sm text-[#ccc]" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></a>
+                  <a onclick="navPage('channel','audit')" class="flex items-center justify-between p-4 rounded-lg border border-[#E5E7EB] hover:bg-[#F5F7FA] transition-colors cursor-pointer"><div class="flex items-center gap-3"><div class="h-10 w-10 rounded-lg bg-[#FAEEDA] flex items-center justify-center"><svg class="ico-lg text-[#854F0B]" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><div><p class="text-sm font-medium text-[#000]">订单审核</p><p class="text-xs text-[#999]">审核号卡办理状态</p></div></div><svg class="ico-sm text-[#ccc]" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></a>
+                </div>
+              </div>
+              <div class="bg-white rounded-xl border border-[#E5E7EB] p-5">
+                <p class="text-base font-medium mb-3">待办事项</p>
+                <div class="space-y-2">
+                  <a onclick="navPage('channel','audit')" class="flex items-center gap-3 p-3 rounded-lg hover:bg-[#F5F7FA] transition-colors cursor-pointer"><div class="h-8 w-8 rounded-lg bg-[#FAEEDA] flex items-center justify-center"><svg class="ico-sm text-[#854F0B]" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div><span class="text-sm text-[#333] flex-1">12 笔订单待审核</span><svg class="ico-sm text-[#ccc]" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></a>
+                  <a onclick="navPage('channel','orders')" class="flex items-center gap-3 p-3 rounded-lg hover:bg-[#F5F7FA] transition-colors cursor-pointer"><div class="h-8 w-8 rounded-lg bg-[#E6F1FB] flex items-center justify-center"><svg class="ico-sm text-[#1677FF]" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg></div><span class="text-sm text-[#333] flex-1">查看全部订单列表</span><svg class="ico-sm text-[#ccc]" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></a>
+                  <div class="flex items-center gap-3 p-3 rounded-lg bg-[#F5F7FA]"><div class="h-8 w-8 rounded-lg bg-[#EEEDFE] flex items-center justify-center"><svg class="ico-sm text-[#534AB7]" viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/></svg></div><span class="text-sm text-[#666] flex-1">暂无其他通知</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Orders -->
+        <div class="page" id="channel-orders">
+          <div class="space-y-5">
+            <div><h1 class="text-xl font-semibold text-[#000]">订单管理</h1><p class="text-sm text-[#999] mt-1">渠道订单列表</p></div>
+            <div class="bg-white rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] p-5">
+              <div class="flex gap-3 mb-4"><input class="input-field flex-1" placeholder="搜索订单号/手机号..."><select class="input-field"><option>全部状态</option><option>待审核</option><option>已通过</option><option>已驳回</option></select><button class="btn-primary">查询</button></div>
+              <table><thead><tr><th>订单号</th><th>号卡</th><th>客户姓名</th><th>手机号</th><th>渠道状态</th><th>提交时间</th><th>操作</th></tr></thead><tbody>
+                <tr><td>XBKM20260812001</td><td>联通惠派卡</td><td>周八</td><td>138****1234</td><td><span class="badge bg-[#FA541C]/10 text-[#FA541C]">待审核</span></td><td>2026-08-12 08:30</td><td><button class="btn-primary text-xs px-3 py-1">审核</button></td></tr>
+                <tr><td>XBKM20260811002</td><td>移动花卡</td><td>吴九</td><td>139****5678</td><td><span class="badge bg-[#52C41A]/10 text-[#52C41A]">已通过</span></td><td>2026-08-11 14:00</td><td><button class="text-[#1677FF] text-xs hover:underline">查看</button></td></tr>
+                <tr><td>XBKM20260810003</td><td>电信星卡</td><td>郑十</td><td>137****9012</td><td><span class="badge bg-[#A32D2D]/10 text-[#A32D2D]">已驳回</span></td><td>2026-08-10 10:00</td><td><button class="text-[#1677FF] text-xs hover:underline">查看</button></td></tr>
+              </tbody></table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Audit -->
+        <div class="page" id="channel-audit">
+          <div class="space-y-5">
+            <div><h1 class="text-xl font-semibold text-[#000]">订单审核</h1><p class="text-sm text-[#999] mt-1">审核号卡办理订单</p></div>
+            <div class="bg-white rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] p-5">
+              <table><thead><tr><th>订单号</th><th>号卡</th><th>客户姓名</th><th>手机号</th><th>代理人</th><th>提交时间</th><th>操作</th></tr></thead><tbody>
+                <tr><td>XBKM20260812001</td><td>联通惠派卡</td><td>周八</td><td>138****1234</td><td>张三</td><td>2026-08-12 08:30</td><td><button class="btn-primary text-xs px-3 py-1">通过</button> <button class="btn-ghost text-xs px-3 py-1 ml-1">驳回</button></td></tr>
+                <tr><td>XBKM20260812004</td><td>移动花卡</td><td>钱十一</td><td>135****3456</td><td>李四</td><td>2026-08-12 07:00</td><td><button class="btn-primary text-xs px-3 py-1">通过</button> <button class="btn-ghost text-xs px-3 py-1 ml-1">驳回</button></td></tr>
+                <tr><td>XBKM20260812005</td><td>电信星卡</td><td>孙十二</td><td>136****7890</td><td>王五</td><td>2026-08-12 06:30</td><td><button class="btn-primary text-xs px-3 py-1">通过</button> <button class="btn-ghost text-xs px-3 py-1 ml-1">驳回</button></td></tr>
+              </tbody></table>
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+</div>
+
+<!-- ============ JAVASCRIPT ============ -->
+<script>
+// Panel switching (admin/agent/channel)
+function switchPanel(name) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+  document.querySelectorAll('.tab-btn').forEach(b => { b.classList.remove('tab-active'); b.classList.add('tab-inactive'); });
+  const tab = document.getElementById('tab-' + name);
+  tab.classList.add('tab-active');
+  tab.classList.remove('tab-inactive');
+  // Reset to dashboard page on panel switch
+  navPage(name, 'dashboard');
+}
+
+// Page navigation within a panel
+const pageLabels = {
+  admin: {
+    dashboard: '数据看板', products: '号卡管理', orders: '订单管理',
+    'report-orders': '报单审核', agents: '代理管理', levels: '等级配置',
+    commissions: '佣金明细', withdrawals: '提现管理', finance: '财务管理',
+    system: '系统管理',
+  },
+  agent: {
+    dashboard: '我的看板', products: '号卡列表', orders: '我的订单',
+    report: '号卡报单', team: '我的团队', commissions: '佣金明细',
+    withdraw: '提现管理', invite: '邀请管理', profile: '个人资料',
+  },
+  channel: {
+    dashboard: '工作台', orders: '订单管理', audit: '订单审核',
+  },
+};
+
+function navPage(panel, page) {
+  // Hide all pages in this panel
+  const content = document.getElementById(panel + '-content');
+  content.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  // Show target page
+  const target = document.getElementById(panel + '-' + page);
+  if (target) target.classList.add('active');
+  // Update sidebar menu active state
+  const nav = document.getElementById(panel + '-nav');
+  nav.querySelectorAll('.nav-item').forEach(item => {
+    item.classList.remove('menu-active');
+    item.classList.add('menu-inactive');
+  });
+  const activeItem = nav.querySelector('[data-page="' + page + '"]');
+  if (activeItem) {
+    activeItem.classList.add('menu-active');
+    activeItem.classList.remove('menu-inactive');
+  }
+  // Update breadcrumb
+  const breadcrumb = document.getElementById(panel + '-breadcrumb');
+  if (breadcrumb && pageLabels[panel] && pageLabels[panel][page]) {
+    breadcrumb.textContent = pageLabels[panel][page];
+  }
+  // Scroll to top
+  content.scrollTop = 0;
+}
+</script>
+
+</body>
+</html>
