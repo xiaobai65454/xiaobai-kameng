@@ -5,8 +5,9 @@ import { useAuth } from '@/lib/auth-context';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { Cog, Save, RefreshCw, Shield, Users, ScrollText } from 'lucide-react';
+import { Cog, Save, RefreshCw, Shield, Users, ScrollText, Link2 } from 'lucide-react';
 
 interface SystemConfig {
   id: string;
@@ -79,6 +80,25 @@ export default function SystemPage() {
       configs: configs.filter(c => ['site_name', 'site_logo', 'site_description', 'contact_phone', 'contact_email'].includes(c.config_key)),
     },
     {
+      title: '用户端链接与内容配置',
+      icon: Link2,
+      configs: configs.filter(c => [
+        'customer_service_wechat',
+        'customer_service_url',
+        'order_query_url',
+        'logistics_query_url',
+        'shop_rating',
+        'shop_badge',
+        'banner_title',
+        'banner_subtitle',
+        'notice_items',
+        'auth_badge_1',
+        'auth_badge_2',
+        'auth_badge_3',
+        'auth_badge_4',
+      ].includes(c.config_key)),
+    },
+    {
       title: '佣金配置',
       icon: Shield,
       configs: configs.filter(c => ['commission_rate_1', 'commission_rate_2', 'commission_rate_3', 'min_withdraw', 'withdraw_fee'].includes(c.config_key)),
@@ -86,7 +106,13 @@ export default function SystemPage() {
     {
       title: '其他配置',
       icon: ScrollText,
-      configs: configs.filter(c => !['site_name', 'site_logo', 'site_description', 'contact_phone', 'contact_email', 'commission_rate_1', 'commission_rate_2', 'commission_rate_3', 'min_withdraw', 'withdraw_fee'].includes(c.config_key)),
+      configs: configs.filter(c => ![
+        'site_name', 'site_logo', 'site_description', 'contact_phone', 'contact_email',
+        'customer_service_wechat', 'customer_service_url', 'order_query_url', 'logistics_query_url',
+        'shop_rating', 'shop_badge', 'banner_title', 'banner_subtitle', 'notice_items',
+        'auth_badge_1', 'auth_badge_2', 'auth_badge_3', 'auth_badge_4',
+        'commission_rate_1', 'commission_rate_2', 'commission_rate_3', 'min_withdraw', 'withdraw_fee',
+      ].includes(c.config_key)),
     },
   ];
 
@@ -147,28 +173,46 @@ export default function SystemPage() {
                     <h2 className="font-semibold">{group.title}</h2>
                   </div>
                   <div className="space-y-3">
-                    {group.configs.map((config) => (
-                      <div key={config.id} className="flex items-center gap-3">
-                        <label className="w-36 text-sm text-[#666] shrink-0">{config.config_key}</label>
-                        <Input
-                          value={config.config_value || ''}
-                          onChange={(e) => {
-                            setConfigs(prev =>
-                              prev.map(c => c.id === config.id ? { ...c, config_value: e.target.value } : c)
-                            );
-                          }}
-                          className="flex-1"
-                        />
-                        <span className="text-xs text-[#ccc] w-24 shrink-0">{config.description || ''}</span>
-                        <Button
-                          size="sm"
-                          onClick={() => handleSave(config)}
-                        >
-                          <Save className="h-3 w-3 mr-1" />
-                          保存
-                        </Button>
-                      </div>
-                    ))}
+                    {group.configs.map((config) => {
+                      const isLongText = ['notice_items', 'banner_subtitle', 'customer_service_url', 'order_query_url', 'logistics_query_url'].includes(config.config_key);
+                      return (
+                        <div key={config.id} className="flex items-start gap-3">
+                          <label className="w-48 text-sm text-[#666] shrink-0 pt-2">
+                            {config.description || config.config_key}
+                            <span className="block text-xs text-[#bbb] mt-0.5">{config.config_key}</span>
+                          </label>
+                          {isLongText ? (
+                            <Textarea
+                              value={config.config_value || ''}
+                              onChange={(e) => {
+                                setConfigs(prev =>
+                                  prev.map(c => c.id === config.id ? { ...c, config_value: e.target.value } : c)
+                                );
+                              }}
+                              className="flex-1 min-h-[60px] resize-y"
+                            />
+                          ) : (
+                            <Input
+                              value={config.config_value || ''}
+                              onChange={(e) => {
+                                setConfigs(prev =>
+                                  prev.map(c => c.id === config.id ? { ...c, config_value: e.target.value } : c)
+                                );
+                              }}
+                              className="flex-1"
+                            />
+                          )}
+                          <Button
+                            size="sm"
+                            onClick={() => handleSave(config)}
+                            className="shrink-0 mt-1"
+                          >
+                            <Save className="h-3 w-3 mr-1" />
+                            保存
+                          </Button>
+                        </div>
+                      );
+                    })}
                   </div>
                 </Card>
               );
