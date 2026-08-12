@@ -138,22 +138,26 @@ export default function TeamPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F0F5FF] pb-20">
-      {/* 顶部数据概览 */}
-      <div className="bg-gradient-to-r from-[#1890FF] to-[#1677FF] px-4 pt-6 pb-8 text-white">
-        <div className="grid grid-cols-3 gap-4">
-          <div className="text-center">
-            <p className="text-2xl font-bold font-mono">{totalTeamSize}</p>
-            <p className="text-xs text-white/70 mt-1">团队总人数</p>
-          </div>
-          <div className="text-center">
-            <p className="text-2xl font-bold font-mono">{todayNew}</p>
-            <p className="text-xs text-white/70 mt-1">今日新增</p>
-          </div>
-          <div className="text-center">
-            <p className="text-2xl font-bold font-mono">{directCount}</p>
-            <p className="text-xs text-white/70 mt-1">直推人数</p>
-          </div>
+    <div className="space-y-5">
+      {/* Page Header */}
+      <div>
+        <h1 className="text-xl font-semibold text-[#000]">我的团队</h1>
+        <p className="text-sm text-[#999] mt-1">管理您的代理团队和分销网络</p>
+      </div>
+
+      {/* Stats Cards */}
+      <div className="grid grid-cols-3 gap-4">
+        <div className="bg-[#0C1A2E] rounded-xl p-5 text-white">
+          <p className="text-[11px] text-white/40">团队总人数</p>
+          <p className="text-2xl font-bold font-mono mt-1">{totalTeamSize}</p>
+        </div>
+        <div className="bg-white rounded-xl p-5 border border-[#E5E7EB]">
+          <p className="text-[11px] text-[#999]">今日新增</p>
+          <p className="text-2xl font-bold font-mono text-[#3B6D11] mt-1">{todayNew}</p>
+        </div>
+        <div className="bg-white rounded-xl p-5 border border-[#E5E7EB]">
+          <p className="text-[11px] text-[#999]">直推人数</p>
+          <p className="text-2xl font-bold font-mono text-[#1677FF] mt-1">{directCount}</p>
         </div>
       </div>
 
@@ -181,37 +185,15 @@ export default function TeamPage() {
         )}
       </div>
 
-      {/* 悬浮邀请按钮 */}
-      <button
-        onClick={handleCopyInvite}
-        className="fixed bottom-24 right-4 w-14 h-14 bg-[#1677FF] rounded-full flex items-center justify-center text-white shadow-lg hover:bg-[#1565E0] transition-colors z-40"
-        style={{ boxShadow: '0 4px 12px rgba(22,119,255,0.4)' }}
-      >
-        {copied ? <CheckCircle2 className="w-6 h-6" /> : <UserPlus className="w-6 h-6" />}
-      </button>
-
-      {/* 底部 Tab 栏 */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-2 py-2 flex justify-around items-center z-50">
-        <a href="/agent" className="flex flex-col items-center gap-1 px-3 py-1">
-          <Wallet className="w-5 h-5 text-gray-400" />
-          <span className="text-xs text-gray-400">首页</span>
-        </a>
-        <a href="/agent/orders" className="flex flex-col items-center gap-1 px-3 py-1">
-          <FileText className="w-5 h-5 text-gray-400" />
-          <span className="text-xs text-gray-400">订单</span>
-        </a>
-        <a href="/agent/products" className="flex flex-col items-center gap-1 px-3 py-1">
-          <ShoppingCart className="w-5 h-5 text-gray-400" />
-          <span className="text-xs text-gray-400">商品</span>
-        </a>
-        <a href="/agent/team" className="flex flex-col items-center gap-1 px-3 py-1">
-          <Users className="w-5 h-5 text-[#1677FF]" />
-          <span className="text-xs text-[#1677FF] font-medium">代理</span>
-        </a>
-        <a href="/agent/profile" className="flex flex-col items-center gap-1 px-3 py-1">
-          <UserCircle className="w-5 h-5 text-gray-400" />
-          <span className="text-xs text-gray-400">我的</span>
-        </a>
+      {/* 邀请按钮 */}
+      <div className="mt-4 flex justify-center">
+        <button
+          onClick={handleCopyInvite}
+          className="px-6 py-3 bg-[#1677FF] rounded-lg flex items-center gap-2 text-white hover:bg-[#185FA5] transition-colors"
+        >
+          {copied ? <CheckCircle2 className="w-5 h-5" /> : <UserPlus className="w-5 h-5" />}
+          <span className="text-sm font-medium">{copied ? '已复制邀请码' : '复制邀请码'}</span>
+        </button>
       </div>
     </div>
   );
