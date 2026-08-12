@@ -136,7 +136,7 @@ export default function AgentOrdersPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f5f5f5] pb-20">
+    <div>
       {/* 顶部状态 Tab 切换 */}
       <div className="bg-white sticky top-0 z-10 border-b border-gray-200">
         <div className="flex items-center">
