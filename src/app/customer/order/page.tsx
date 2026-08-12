@@ -74,7 +74,6 @@ interface Product {
   directed_data: string;
   call_minutes: number;
   validity_months: number;
-  commission_amount: string;
   age_limit: string;
   area_limit: string;
 }
@@ -227,7 +226,7 @@ function OrderForm() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#F0F5FF] flex items-center justify-center">
+      <div className="min-h-screen bg-[#f5f5f5] flex items-center justify-center">
         <div className="text-gray-400">加载中...</div>
       </div>
     );
@@ -235,14 +234,14 @@ function OrderForm() {
 
   if (!product) {
     return (
-      <div className="min-h-screen bg-[#F0F5FF] flex items-center justify-center">
+      <div className="min-h-screen bg-[#f5f5f5] flex items-center justify-center">
         <div className="text-gray-400">商品不存在</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#F0F5FF] pb-24">
+    <div className="min-h-screen bg-[#f5f5f5] pb-24">
       {/* 顶部导航 */}
       <div className="bg-white px-4 py-3 border-b sticky top-0 z-10">
         <div className="flex items-center gap-3">
@@ -270,20 +269,20 @@ function OrderForm() {
             </div>
             <div className="space-y-1.5 text-sm text-gray-600">
               <div className="flex items-center gap-2">
-                <Zap className="h-4 w-4 text-[#1677FF]" />
+                <Zap className="h-4 w-4 text-[#0d6efd]" />
                 <span>通用流量 {product.general_data}G</span>
                 {product.directed_data && (
                   <span className="text-gray-400">+ 定向{product.directed_data}</span>
                 )}
               </div>
               <div className="flex items-center gap-2">
-                <Phone className="h-4 w-4 text-[#1677FF]" />
+                <Phone className="h-4 w-4 text-[#0d6efd]" />
                 <span>通话 {product.call_minutes}分钟</span>
                 <span className="text-gray-400">|</span>
                 <span>月租 ¥{product.monthly_rent}</span>
               </div>
               <div className="flex items-center gap-2">
-                <Clock className="h-4 w-4 text-[#1677FF]" />
+                <Clock className="h-4 w-4 text-[#0d6efd]" />
                 <span>有效期 {product.validity_months}个月</span>
               </div>
             </div>
@@ -296,7 +295,7 @@ function OrderForm() {
         {/* 收货人信息 */}
         <div className="bg-white rounded-xl p-4 shadow-sm space-y-4">
           <div className="flex items-center gap-2 mb-2">
-            <User className="h-5 w-5 text-[#1677FF]" />
+            <User className="h-5 w-5 text-[#0d6efd]" />
             <h3 className="font-bold text-gray-900">收货人信息</h3>
           </div>
 
@@ -402,9 +401,9 @@ function OrderForm() {
         {/* 提示信息 */}
         <div className="bg-blue-50 rounded-xl p-4">
           <div className="flex items-start gap-2">
-            <Shield className="h-5 w-5 text-[#1677FF] mt-0.5" />
+            <Shield className="h-5 w-5 text-[#0d6efd] mt-0.5" />
             <div className="text-sm text-gray-600">
-              <p className="font-medium text-[#1677FF] mb-1">温馨提示</p>
+              <p className="font-medium text-[#0d6efd] mb-1">温馨提示</p>
               <p>1. 请确保填写的信息真实有效，否则无法通过审核</p>
               <p>2. 同一身份证30天内只能办理一张号卡</p>
               <p>3. 号卡将免费邮寄到您填写的地址</p>
@@ -427,7 +426,7 @@ function OrderForm() {
               {/* 当前位置提示 */}
               {selectedAddr && (
                 <div className="bg-blue-50 rounded-lg p-3 mb-4">
-                  <p className="text-sm text-[#1677FF]">
+                  <p className="text-sm text-[#0d6efd]">
                     <MapPinIcon className="h-4 w-4 inline mr-1" />
                     {selectedAddr}
                   </p>
@@ -441,7 +440,7 @@ function OrderForm() {
                   <input
                     type="text"
                     placeholder="请输入省市区，如：北京市朝阳区"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1677FF]"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0d6efd]"
                     onChange={(e) => {
                       const region = e.target.value;
                       setSelectedAddr(prev => {
@@ -456,7 +455,7 @@ function OrderForm() {
                   <textarea
                     placeholder="请输入详细地址，如：xx 街道 xx 号 xx 室"
                     rows={3}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1677FF]"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0d6efd]"
                     onChange={(e) => {
                       const detail = e.target.value;
                       setSelectedAddr(prev => {
@@ -496,7 +495,7 @@ function OrderForm() {
               <Button
                 onClick={handleConfirmAddress}
                 disabled={!selectedAddr}
-                className="flex-1 bg-[#1677FF]"
+                className="flex-1 bg-[#0d6efd]"
               >
                 确认选择
               </Button>
@@ -514,7 +513,7 @@ function OrderForm() {
         <Button
           onClick={handleSubmit}
           disabled={submitting}
-          className="w-full h-12 bg-[#1677FF] hover:bg-[#1677FF]/90 text-white text-lg font-bold rounded-lg"
+          className="w-full h-12 bg-[#0d6efd] hover:bg-[#0d6efd]/90 text-white text-lg font-bold rounded-lg"
         >
           {submitting ? '提交中...' : '提交订单'}
         </Button>
@@ -526,7 +525,7 @@ function OrderForm() {
 export default function OrderPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-[#F0F5FF] flex items-center justify-center">
+      <div className="min-h-screen bg-[#f5f5f5] flex items-center justify-center">
         <div className="text-gray-400">加载中...</div>
       </div>
     }>
