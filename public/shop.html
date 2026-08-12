@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>小白卡盟 - 号卡分销代理平台</title>
+  <meta name="keywords" content="号卡,手机卡,流量卡,分销,代理,联通,电信,移动,广电,小白卡盟">
+  <meta name="description" content="小白卡盟 - 专业号卡服务平台，四运营商全品类覆盖，官方授权 极速开卡">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    /* ========== Design Tokens ========== */
+    :root {
+      --primary-color: #0d6efd;
+      --primary-light: #e6f7ff;
+      --primary-dark: #0b5ed7;
+      --secondary-color: #f5f5f5;
+      --price-color: #ff3d63;
+      --price-bg: #ffe8ee;
+      --success-color: #52c41a;
+      --success-bg: #f6ffed;
+      --warning-color: #fa8c16;
+      --warning-bg: #fff7e6;
+      --danger-color: #f5222d;
+      --danger-bg: #fff2f0;
+      --purple-color: #722ed1;
+      --purple-bg: #f9f0ff;
+      --text-primary: #333;
+      --text-secondary: #666;
+      --text-light: #999;
+      --border-color: #eee;
+      --bg-color: #f5f5f5;
+      --card-bg: #fff;
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --radius-xl: 20px;
+      --shadow-sm: 0 1px 5px rgba(0, 0, 0, 0.05);
+      --shadow-card: 0px 0px 20px 0px rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      --shadow-lg: 0 2px 10px rgba(0, 0, 0, 0.2);
+      --transition: all 0.2s ease;
+    }
+
+    /* ========== Base ========== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'PingFang SC', 'Microsoft YaHei', -apple-system, sans-serif;
+      background-color: var(--bg-color);
+      font-size: 14px;
+      color: var(--text-primary);
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .mobile-container {
+      width: 100%;
+      max-width: 480px;
+      position: relative;
+      overflow-x: hidden;
+      background-color: #f9fafb;
+      min-height: 100vh;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    img {
+      max-width: 100%;
+      display: block;
+    }
+
+    /* ========== Header ========== */
+    .header {
+      background-color: white;
+      padding: 12px 15px;
+      box-shadow: 0 1px 5px rgba(0, 0, 0, 0.05);
+      padding-bottom: 5px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .search-container {
+      display: flex;
+      align-items: center;
+      background-color: #fff;
+      border-radius: 20px;
+      padding: 5px;
+      margin-bottom: 10px;
+      border: solid 1px var(--primary-color);
+    }
+
+    .search-input {
+      flex: 1;
+      border: none;
+      background: transparent;
+      outline: none;
+      font-size: 14px;
+      padding: 0 8px;
+    }
+
+    .search-btn {
+      color: #fff;
+      border: none;
+      font-size: 14px;
+      background-color: var(--primary-color);
+      border-radius: 15px;
+      padding: 5px 15px;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+
+    /* ========== Shop Info ========== */
+    .shop-info-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin: 10px 0;
+    }
+
+    .shop-info-left {
+      flex: 1;
+    }
+
+    .shop-name {
+      font-weight: bold;
+      font-size: 16px;
+      margin-bottom: 5px;
+    }
+
+    .shop-rating-container {
+      display: flex;
+      align-items: center;
+    }
+
+    .shop-reputation {
+      font-size: 12px;
+      border: solid 1px var(--price-bg);
+      padding: 2px 5px;
+      border-radius: 5px 0 0 5px;
+      color: var(--price-color);
+      font-weight: bold;
+    }
+
+    .shop-badge {
+      background: var(--price-bg);
+      color: var(--price-color);
+      padding: 2px 6px;
+      border-radius: 0 4px 4px 0;
+      font-size: 12px;
+    }
+
+    .shop-info-right {
+      display: flex;
+      gap: 12px;
+    }
+
+    .shop-action-btn {
+      background: none;
+      border: none;
+      color: #343a40;
+      font-size: 13px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0;
+      cursor: pointer;
+    }
+
+    .shop-action-btn i {
+      font-size: 18px;
+      margin-bottom: 2px;
+    }
+
+    /* ========== Banner ========== */
+    .banner {
+      margin: 5px 0;
+      border-radius: 10px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .banner-img {
+      width: 100%;
+      height: 120px;
+      background: linear-gradient(135deg, #0d6efd 0%, #00a8ff 50%, #00d4ff 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 24px;
+      font-weight: bold;
+      letter-spacing: 2px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .banner-img::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -20%;
+      width: 300px;
+      height: 300px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 50%;
+    }
+
+    .banner-img::after {
+      content: '';
+      position: absolute;
+      bottom: -30%;
+      left: -10%;
+      width: 200px;
+      height: 200px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 50%;
+    }
+
+    .banner-text {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+    }
+
+    .banner-text .sub {
+      font-size: 13px;
+      font-weight: normal;
+      opacity: 0.9;
+      margin-top: 4px;
+      letter-spacing: 0;
+    }
+
+    /* ========== Filter ========== */
+    .filter-container {
+      background-color: white;
+      padding: 5px 15px;
+      margin-bottom: 10px;
+    }
+
+    .filter-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 5px;
+      padding-bottom: 5px;
+      margin: 5px 0px;
+    }
+
+    .filter-group {
+      position: relative;
+      flex: 1;
+      min-width: 80px;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+    }
+
+    .filter-select-btn {
+      width: 100%;
+      padding: 8px 0px;
+      border-radius: 4px;
+      border: none;
+      background-color: #f8f9fa;
+      text-align: center;
+      font-size: 12px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .filter-select-btn:hover {
+      background-color: #e9ecef;
+    }
+
+    .filter-select-btn i {
+      font-size: 10px;
+      margin-left: 4px;
+    }
+
+    .filter-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      border-top: solid 1px var(--border-color);
+      padding-top: 10px;
+      padding-bottom: 10px;
+    }
+
+    .filter-button,
+    .card-type-button {
+      padding: 4px 15px;
+      border-radius: 15px;
+      background-color: var(--secondary-color);
+      font-size: 14px;
+      border: none;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .filter-button.active,
+    .card-type-button.active {
+      background-color: var(--primary-color);
+      color: white;
+    }
+
+    /* ========== Notice Bar ========== */
+    .notice-bar {
+      display: flex;
+      align-items: center;
+      background: linear-gradient(90deg, #fff9e6 0%, #fffef5 100%);
+      padding: 8px 15px;
+      margin-bottom: 10px;
+      border-radius: 0;
+      overflow: hidden;
+    }
+
+    .notice-icon {
+      color: var(--warning-color);
+      font-size: 16px;
+      margin-right: 8px;
+      flex-shrink: 0;
+    }
+
+    .notice-scroll-area {
+      flex: 1;
+      overflow: hidden;
+      position: relative;
+      height: 20px;
+    }
+
+    .notice-track {
+      display: flex;
+      gap: 60px;
+      animation: scroll 20s linear infinite;
+      white-space: nowrap;
+    }
+
+    .notice-item {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    @keyframes scroll {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* ========== Product List ========== */
+    .product-list {
+      padding: 0 15px;
+      padding-bottom: 80px;
+    }
+
+    .card-item {
+      background-color: white;
+      border-radius: var(--radius-md);
+      margin-bottom: 12px;
+      padding: 10px;
+      box-shadow: var(--shadow-card);
+      border: solid 1px rgba(0, 0, 0, 0.05);
+      position: relative;
+      transition: var(--transition);
+    }
+
+    .card-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .operator-icon {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      z-index: 1;
+      font-size: 14px;
+      font-weight: bold;
+      color: white;
+    }
+
+    .operator-unicom { background: linear-gradient(135deg, #f5222d 0%, #ff4d4f 100%); }
+    .operator-telecom { background: linear-gradient(135deg, #1890ff 0%, #00a8ff 100%); }
+    .operator-mobile { background: linear-gradient(135deg, #52c41a 0%, #73d13d 100%); }
+    .operator-broadnet { background: linear-gradient(135deg, #722ed1 0%, #9254de 100%); }
+
+    .topping-tag {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      z-index: 1;
+      background: linear-gradient(135deg, #ff4d4f, #ff7875);
+      color: white;
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 3px;
+      font-weight: bold;
+    }
+
+    .card-actionsh {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .card-image {
+      width: 80px;
+      height: 80px;
+      border-radius: var(--radius-sm);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      color: white;
+    }
+
+    .card-info {
+      margin: 0;
+      flex: 1;
+      padding: 0px 10px;
+      min-width: 0;
+    }
+
+    .card-title {
+      font-size: 15px;
+      font-weight: bold;
+      margin-bottom: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      padding-right: 32px;
+    }
+
+    .card-desc {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .card-features-inline {
+      display: flex;
+      margin: 5px 0;
+      gap: 8px;
+    }
+
+    .feature-badge {
+      flex: none;
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+    }
+
+    .feature-badge i {
+      margin-right: 3px;
+      font-size: 11px;
+    }
+
+    .badge-blue { background: var(--primary-light); color: var(--primary-color); }
+    .badge-orange { background: var(--warning-bg); color: var(--warning-color); }
+    .badge-green { background: var(--success-bg); color: var(--success-color); }
+    .badge-red { background: var(--danger-bg); color: var(--danger-color); }
+    .badge-purple { background: var(--purple-bg); color: var(--purple-color); }
+
+    .card-features {
+      display: flex;
+      margin: 10px 0;
+      border: solid 1px var(--border-color);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+    }
+
+    .feature-item {
+      flex: 1;
+      text-align: center;
+      padding: 6px 2px;
+      border-right: 1px solid var(--border-color);
+    }
+
+    .feature-item:last-child {
+      border-right: none;
+    }
+
+    .feature-value {
+      font-size: 16px;
+      font-weight: bold;
+      color: var(--primary-color);
+    }
+
+    .feature-value.price {
+      color: var(--price-color);
+    }
+
+    .feature-label {
+      font-size: 11px;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+
+    .card-actions {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+      align-items: center;
+    }
+
+    .card-age {
+      font-size: 12px;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .card-actions-right {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-share {
+      background-color: #f0f0f0;
+      color: var(--text-secondary);
+      border: none;
+      border-radius: var(--radius-xl);
+      padding: 6px 14px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .btn-share:hover {
+      background-color: #e0e0e0;
+    }
+
+    .btn-buy {
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: var(--radius-xl);
+      padding: 6px 18px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .btn-buy:hover {
+      background-color: var(--primary-dark);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
+    }
+
+    .card-tags {
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: solid 1px var(--border-color);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+
+    .card-tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: var(--radius-sm);
+      font-size: 11px;
+      transition: var(--transition);
+    }
+
+    .card-tag:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    /* ========== Floating Buttons ========== */
+    .floating-buttons {
+      position: fixed;
+      right: 15px;
+      bottom: 20px;
+      z-index: 999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .floating-button {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background-color: var(--primary-color);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-lg);
+      transition: var(--transition);
+      cursor: pointer;
+      border: none;
+    }
+
+    .floating-button:hover {
+      transform: scale(1.1);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .floating-button i {
+      font-size: 20px;
+    }
+
+    /* ========== Auth Banner ========== */
+    .auth-banner {
+      background-color: var(--primary-light);
+      border-radius: var(--radius-md);
+      padding: 8px;
+      margin: 8px 0;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+      color: var(--primary-color);
+      font-size: 12px;
+    }
+
+    .auth-banner span {
+      white-space: nowrap;
+      margin: 2px 0;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    /* ========== Toast ========== */
+    .toast {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(0, 0, 0, 0.75);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      z-index: 10000;
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+    }
+
+    .toast.show {
+      opacity: 1;
+    }
+
+    /* ========== Empty State ========== */
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-light);
+    }
+
+    .empty-state i {
+      font-size: 40px;
+      margin-bottom: 10px;
+      opacity: 0.3;
+    }
+
+    /* ========== Responsive ========== */
+    @media (min-width: 481px) {
+      body {
+        background-color: #f0f0f0;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="mobile-container">
+    <!-- ========== Header ========== -->
+    <div class="header">
+      <div class="search-container">
+        <input type="text" class="search-input" placeholder="搜索套餐名称、月租、流量..." id="searchInput">
+        <button class="search-btn" id="searchBtn"><i class="bi bi-search"></i> 搜索</button>
+      </div>
+
+      <!-- Shop Info -->
+      <div class="shop-info-container">
+        <div class="shop-info-left">
+          <div class="shop-name">小白卡盟 <i class="bi bi-patch-check-fill" style="color:#0d6efd;font-size:14px;"></i></div>
+          <div class="shop-rating-container">
+            <span class="shop-reputation">店铺口碑 4.98</span>
+            <span class="shop-badge">官方正品保障</span>
+          </div>
+        </div>
+        <div class="shop-info-right">
+          <button class="shop-action-btn" onclick="showToast('客服微信：xiaobai-kameng')">
+            <i class="bi bi-headset"></i>
+            <span>客服</span>
+          </button>
+          <a href="#" class="shop-action-btn" onclick="showToast('跳转查单页面');return false;">
+            <i class="bi bi-search"></i>
+            <span>查单</span>
+          </a>
+          <button class="shop-action-btn" onclick="showToast('号卡物流查询')">
+            <i class="bi bi-truck"></i>
+            <span>物流</span>
+          </button>
+          <a href="#" class="shop-action-btn" onclick="showToast('店铺主页');return false;">
+            <i class="bi bi-shop"></i>
+            <span>店铺</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Banner -->
+      <div class="banner">
+        <div class="banner-img">
+          <div class="banner-text">
+            小白卡盟
+            <div class="sub">四运营商全品类 | 官方授权 | 极速开卡</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Auth Banner -->
+      <div class="auth-banner">
+        <span><i class="bi bi-shield-check"></i> 官方授权</span>
+        <span><i class="bi bi-lock"></i> 实名认证</span>
+        <span><i class="bi bi-lightning-charge"></i> 极速开卡</span>
+        <span><i class="bi bi-headset"></i> 售后保障</span>
+      </div>
+    </div>
+
+    <!-- ========== Filter ========== -->
+    <div class="filter-container">
+      <div class="filter-row">
+        <div class="filter-group">
+          <i class="bi bi-geo-alt" style="color:#ff5000;font-size:14px;"></i>
+          <button class="filter-select-btn" onclick="showToast('选择收货地')">收货地 <i class="bi bi-chevron-down"></i></button>
+        </div>
+        <div class="filter-group">
+          <i class="bi bi-currency-yen" style="color:#2290fe;font-size:14px;"></i>
+          <button class="filter-select-btn" onclick="toggleFilter(this, 'priceOptions')">优惠月租 <i class="bi bi-chevron-down"></i></button>
+        </div>
+        <div class="filter-group">
+          <i class="bi bi-wifi" style="color:#0090ff;font-size:14px;"></i>
+          <button class="filter-select-btn" onclick="toggleFilter(this, 'flowOptions')">可用流量 <i class="bi bi-chevron-down"></i></button>
+        </div>
+        <div class="filter-group">
+          <i class="bi bi-telephone" style="color:#1296db;font-size:14px;"></i>
+          <button class="filter-select-btn" onclick="toggleFilter(this, 'callOptions')">通话时长 <i class="bi bi-chevron-down"></i></button>
+        </div>
+      </div>
+
+      <!-- Operator Filter -->
+      <div class="filter-buttons">
+        <button class="filter-button active" data-filter="all" onclick="filterOperator(this, 'all')">精选</button>
+        <button class="filter-button" data-filter="telecom" onclick="filterOperator(this, 'telecom')">电信</button>
+        <button class="filter-button" data-filter="unicom" onclick="filterOperator(this, 'unicom')">联通</button>
+        <button class="filter-button" data-filter="mobile" onclick="filterOperator(this, 'mobile')">移动</button>
+        <button class="filter-button" data-filter="broadnet" onclick="filterOperator(this, 'broadnet')">广电</button>
+      </div>
+
+      <!-- Card Type Filter -->
+      <div class="filter-buttons">
+        <button class="card-type-button active" data-value="" onclick="filterType(this, '')">全部</button>
+        <button class="card-type-button" data-value="card" onclick="filterType(this, 'card')">号卡</button>
+        <button class="card-type-button" data-value="broadband" onclick="filterType(this, 'broadband')">宽带</button>
+        <button class="card-type-button" data-value="device" onclick="filterType(this, 'device')">设备</button>
+      </div>
+    </div>
+
+    <!-- ========== Notice Bar ========== -->
+    <div class="notice-bar">
+      <i class="bi bi-megaphone-fill notice-icon"></i>
+      <div class="notice-scroll-area">
+        <div class="notice-track">
+          <span class="notice-item">📢 官方授权 正品保障 四运营商全覆盖</span>
+          <span class="notice-item">🔥 联通惠派卡限时活动 月租低至9元</span>
+          <span class="notice-item">💎 支持选号 实名认证 极速开卡</span>
+          <span class="notice-item">📢 官方授权 正品保障 四运营商全覆盖</span>
+          <span class="notice-item">🔥 联通惠派卡限时活动 月租低至9元</span>
+          <span class="notice-item">💎 支持选号 实名认证 极速开卡</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== Product List ========== -->
+    <div class="product-list" id="productList"></div>
+  </div>
+
+  <!-- ========== Floating Buttons ========== -->
+  <button class="floating-button" onclick="scrollToTop()" title="回到顶部">
+    <i class="bi bi-arrow-up"></i>
+  </button>
+  <button class="floating-button" onclick="showToast('联系客服：xiaobai-kameng')" style="background:linear-gradient(135deg,#52c41a,#73d13d);" title="联系客服">
+    <i class="bi bi-chat-dots"></i>
+  </button>
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // ========== Product Data ==========
+    const products = [
+      {
+        id: 1, name: '联通联王卡', desc: '29月租150G通用+200分钟+会员', operator: 'unicom',
+        monthlyRent: 29, generalData: 150, directedData: 0, callMinutes: 200,
+        ageMin: 18, ageMax: 28, supportNumber: false, needPhoto: false,
+topping: true, type: 'card',
+        tags: ['特惠套餐', '可选号码', '黄金速率'],
+        remark: '下单后联系商家选号 24小时内发货'
+      },
+      {
+        id: 2, name: '联通跃派卡C', desc: '39月租200G通用流量+200分钟通话', operator: 'unicom',
+        monthlyRent: 39, generalData: 200, directedData: 0, callMinutes: 200,
+        ageMin: 18, ageMax: 30, supportNumber: false, needPhoto: false,
+topping: false, type: 'card',
+        tags: ['特惠套餐', '高性价比', '黄金速率'],
+        remark: '更新ICCID自主激活 后72小时左右发货'
+      },
+      {
+        id: 3, name: '联通幕派卡', desc: '49月租280G通用流量+300分钟通话', operator: 'unicom',
+        monthlyRent: 49, generalData: 280, directedData: 0, callMinutes: 300,
+        ageMin: 18, ageMax: 30, supportNumber: false, needPhoto: false,
+topping: false, type: 'card',
+        tags: ['特惠套餐', '高性价比', '黄金速率'],
+        remark: '更新ICCID自主激活 后72小时左右发货'
+      },
+      {
+        id: 4, name: '联通惠派卡', desc: '29月租280G通用+300分钟+会员', operator: 'unicom',
+        monthlyRent: 29, generalData: 280, directedData: 0, callMinutes: 300,
+        ageMin: 18, ageMax: 30, supportNumber: false, needPhoto: true,
+topping: true, type: 'card',
+        tags: ['特惠套餐', '高性价比', '限时活动'],
+        remark: '下单后7天左右发货'
+      },
+      {
+        id: 5, name: '广电龙泉卡', desc: '39月租60G高速通用流量', operator: 'broadnet',
+        monthlyRent: 39, generalData: 60, directedData: 0, callMinutes: 0,
+        ageMin: 18, ageMax: 60, supportNumber: false, needPhoto: false,
+topping: false, type: 'card',
+        tags: ['特惠套餐', '超大流量', '结转流量'],
+        remark: '禁止宣传高于60G'
+      },
+      {
+        id: 6, name: '电信星耀卡', desc: '29月租155G通用+30G定向+100分钟', operator: 'telecom',
+        monthlyRent: 29, generalData: 155, directedData: 30, callMinutes: 100,
+        ageMin: 18, ageMax: 60, supportNumber: true, needPhoto: false,
+topping: true, type: 'card',
+        tags: ['特惠套餐', '自选号码', '长期套餐'],
+        remark: '下单后48小时内发货 支持自选号'
+      },
+      {
+        id: 7, name: '电信繁星卡', desc: '39月租210G通用+30G定向+200分钟', operator: 'telecom',
+        monthlyRent: 39, generalData: 210, directedData: 30, callMinutes: 200,
+        ageMin: 18, ageMax: 60, supportNumber: true, needPhoto: false,
+topping: false, type: 'card',
+        tags: ['特惠套餐', '大流量', '长期有效'],
+        remark: '激活后24小时内到账流量'
+      },
+      {
+        id: 8, name: '移动龙卡', desc: '39月租150G通用+50G定向+100分钟', operator: 'mobile',
+        monthlyRent: 39, generalData: 150, directedData: 50, callMinutes: 100,
+        ageMin: 18, ageMax: 55, supportNumber: true, needPhoto: false,
+topping: false, type: 'card',
+        tags: ['特惠套餐', '自选号码', '送视频会员'],
+        remark: '下单后联系商家选号 48小时内发货'
+      },
+      {
+        id: 9, name: '移动大流量卡', desc: '59月租200G通用+50G定向+200分钟', operator: 'mobile',
+        monthlyRent: 59, generalData: 200, directedData: 50, callMinutes: 200,
+        ageMin: 18, ageMax: 55, supportNumber: true, needPhoto: false,
+topping: false, type: 'card',
+        tags: ['特惠套餐', '超大流量', '送视频会员'],
+        remark: '激活后自动到账 送3个月视频会员'
+      },
+      {
+        id: 10, name: '联通宽带宝', desc: '360-560元年租包1-2年 100-300M宽带', operator: 'unicom',
+        monthlyRent: 40, generalData: 0, directedData: 0, callMinutes: 0,
+        ageMin: 18, ageMax: 60, supportNumber: false, needPhoto: false,
+topping: false, type: 'broadband',
+        tags: ['赠送设备', '地址备注', '套餐规格'],
+        remark: '需确认地址覆盖 上门安装'
+      },
+      {
+        id: 11, name: '电信单宽带', desc: '50月租200兆电信高速宽带', operator: 'telecom',
+        monthlyRent: 50, generalData: 0, directedData: 0, callMinutes: 0,
+        ageMin: 18, ageMax: 60, supportNumber: false, needPhoto: false,
+topping: false, type: 'broadband',
+        tags: ['可续约', '当地上门', '售后保障'],
+        remark: '支持续约 当地上门安装'
+      },
+      {
+        id: 12, name: '广电福瑞卡', desc: '19月租80G通用+100分钟', operator: 'broadnet',
+        monthlyRent: 19, generalData: 80, directedData: 0, callMinutes: 100,
+        ageMin: 18, ageMax: 60, supportNumber: false, needPhoto: false,
+topping: true, type: 'card',
+        tags: ['特惠套餐', '超低月租', '流量结转'],
+        remark: '自主激活 后48小时内发货'
+      }
+    ];
+
+    // ========== Operator Config ==========
+    const operatorConfig = {
+      unicom: { name: '联通', icon: 'bi-1-circle-fill', color: 'operator-unicom', bg: 'linear-gradient(135deg, #f5222d 0%, #ff7875 100%)' },
+      telecom: { name: '电信', icon: 'bi-2-circle-fill', color: 'operator-telecom', bg: 'linear-gradient(135deg, #1890ff 0%, #69b1ff 100%)' },
+      mobile: { name: '移动', icon: 'bi-3-circle-fill', color: 'operator-mobile', bg: 'linear-gradient(135deg, #52c41a 0%, #95de64 100%)' },
+      broadnet: { name: '广电', icon: 'bi-4-circle-fill', color: 'operator-broadnet', bg: 'linear-gradient(135deg, #722ed1 0%, #b37feb 100%)' }
+    };
+
+    // ========== Tag Colors ==========
+    const tagColors = [
+      { bg: '#f0f9ff', text: '#1890ff' },
+      { bg: '#f6ffed', text: '#52c41a' },
+      { bg: '#fff7e6', text: '#fa8c16' },
+      { bg: '#fff2f0', text: '#f5222d' },
+      { bg: '#f9f0ff', text: '#722ed1' }
+    ];
+
+    // ========== Render Products ==========
+    let currentOperatorFilter = 'all';
+    let currentTypeFilter = '';
+    let searchKeyword = '';
+
+    function renderProducts() {
+      const productList = document.getElementById('productList');
+      let filtered = products;
+
+      if (currentOperatorFilter !== 'all') {
+        filtered = filtered.filter(p => p.operator === currentOperatorFilter);
+      }
+      if (currentTypeFilter) {
+        filtered = filtered.filter(p => p.type === currentTypeFilter);
+      }
+      if (searchKeyword) {
+        const kw = searchKeyword.toLowerCase();
+        filtered = filtered.filter(p =>
+          p.name.toLowerCase().includes(kw) ||
+          p.desc.toLowerCase().includes(kw) ||
+          String(p.monthlyRent).includes(kw)
+        );
+      }
+
+      if (filtered.length === 0) {
+        productList.innerHTML = '<div class="empty-state"><i class="bi bi-inbox"></i><div>暂无符合条件的商品</div></div>';
+        return;
+      }
+
+      productList.innerHTML = filtered.map(product => {
+        const op = operatorConfig[product.operator];
+        const tags = product.tags || [];
+        const tagsHtml = tags.map((tag, i) => {
+          const c = tagColors[i % tagColors.length];
+          return `<span class="card-tag" style="background:${c.bg};color:${c.text}">${tag}</span>`;
+        }).join('');
+
+        return `
+          <div class="card-item">
+            ${product.topping ? '<div class="topping-tag">主推</div>' : ''}
+            <div class="operator-icon ${op.color}">${op.name[0]}</div>
+
+            <div class="card-actionsh">
+              <div class="card-image" style="background:${op.bg};">
+                <i class="bi ${op.icon}"></i>
+              </div>
+              <div class="card-info">
+                <div class="card-title">${product.name}</div>
+                <div class="card-desc">${product.desc}</div>
+                <div class="card-features-inline">
+                  <div class="feature-badge ${product.supportNumber ? 'badge-green' : 'badge-blue'}">
+                    <i class="bi ${product.supportNumber ? 'bi-check-circle-fill' : 'bi-x-circle-fill'}"></i>
+                    ${product.supportNumber ? '支持选号' : '无需选号'}
+                  </div>
+                  <div class="feature-badge ${product.needPhoto ? 'badge-orange' : 'badge-green'}">
+                    <i class="bi ${product.needPhoto ? 'bi-check-circle-fill' : 'bi-x-circle-fill'}"></i>
+                    ${product.needPhoto ? '需传照片' : '无需照片'}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card-features">
+              <div class="feature-item">
+                <div class="feature-value price">¥${product.monthlyRent}</div>
+                <div class="feature-label">每月月租</div>
+              </div>
+              <div class="feature-item">
+                <div class="feature-value">${product.generalData}G</div>
+                <div class="feature-label">通用流量</div>
+              </div>
+              <div class="feature-item">
+                <div class="feature-value">${product.directedData}G</div>
+                <div class="feature-label">定向流量</div>
+              </div>
+              <div class="feature-item">
+                <div class="feature-value">${product.callMinutes}</div>
+                <div class="feature-label">通话分钟</div>
+              </div>
+            </div>
+
+            <div class="card-actions">
+              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                <div class="card-age">
+                  <i class="bi bi-person-check-fill"></i> ${product.ageMin}-${product.ageMax}周岁
+                </div>
+              </div>
+              <div class="card-actions-right">
+                <button class="btn-share" onclick="copyShareLink(${product.id})"><i class="bi bi-share"></i> 分享</button>
+                <button class="btn-buy" onclick="handleOrder(${product.id})"><i class="bi bi-bag-check"></i> 立即办理</button>
+              </div>
+            </div>
+
+            ${tags.length ? `<div class="card-tags">${tagsHtml}</div>` : ''}
+            ${product.remark ? `<div style="font-size:11px;color:#999;margin-top:6px;padding-top:6px;border-top:1px solid #f5f5f5;"><i class="bi bi-info-circle"></i> ${product.remark}</div>` : ''}
+          </div>
+        `;
+      }).join('');
+    }
+
+    // ========== Filter Functions ==========
+    function filterOperator(btn, operator) {
+      document.querySelectorAll('.filter-button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentOperatorFilter = operator;
+      renderProducts();
+    }
+
+    function filterType(btn, type) {
+      document.querySelectorAll('.card-type-button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentTypeFilter = type;
+      renderProducts();
+    }
+
+    function toggleFilter(btn, optionsId) {
+      // Simple toast for demo
+      const labels = {
+        priceOptions: ['全部', '20元以下', '20-30元', '30-40元', '40元以上'],
+        flowOptions: ['全部', '100GB以下', '100-200GB', '200GB以上'],
+        callOptions: ['全部', '100分钟以内', '100-200分钟', '200分钟以上']
+      };
+      const opts = labels[optionsId] || [];
+      showToast('筛选: ' + opts.join(' / '));
+    }
+
+    // ========== Search ==========
+    document.getElementById('searchInput').addEventListener('input', function(e) {
+      searchKeyword = e.target.value.trim();
+      renderProducts();
+    });
+
+    document.getElementById('searchBtn').addEventListener('click', function() {
+      searchKeyword = document.getElementById('searchInput').value.trim();
+      renderProducts();
+      if (searchKeyword) showToast('搜索: ' + searchKeyword);
+    });
+
+    // ========== Actions ==========
+    function handleOrder(productId) {
+      const product = products.find(p => p.id === productId);
+      if (product) {
+        showToast(`办理 ${product.name} - 跳转下单页面`);
+      }
+    }
+
+    function copyShareLink(productId) {
+      const product = products.find(p => p.id === productId);
+      if (product) {
+        const link = `https://xiaobai-kameng.com/s/${product.id}`;
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(link).then(() => {
+            showToast('分享链接已复制到剪贴板');
+          }).catch(() => {
+            showToast('分享链接: ' + link);
+          });
+        } else {
+          showToast('分享链接: ' + link);
+        }
+      }
+    }
+
+    function scrollToTop() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ========== Toast ==========
+    let toastTimer = null;
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.add('show');
+      if (toastTimer) clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        toast.classList.remove('show');
+      }, 2500);
+    }
+
+    // ========== Init ==========
+    renderProducts();
+  </script>
+</body>
+
+</html>
