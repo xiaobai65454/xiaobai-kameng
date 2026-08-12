@@ -3,7 +3,7 @@
 import { useAuth } from '@/lib/auth-context';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import { Shield, User, ArrowRight, ClipboardCheck } from 'lucide-react';
+import { Shield, User, ArrowRight, ClipboardCheck, Smartphone } from 'lucide-react';
 
 export default function HomePage() {
   const { isAuthenticated, isLoading, isAdmin, profile } = useAuth();
@@ -46,7 +46,28 @@ export default function HomePage() {
         </div>
 
         {/* Portal Cards */}
-        <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
+          {/* Customer Shop */}
+          <a
+            href="/customer"
+            className="group relative bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:bg-white/10 hover:border-cyan-500/50 transition-all duration-300"
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-cyan-600/20 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="relative">
+              <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-cyan-500 mb-4">
+                <Smartphone className="w-7 h-7 text-white" />
+              </div>
+              <h2 className="text-xl font-bold text-white mb-2">号卡商城</h2>
+              <p className="text-slate-400 text-sm mb-4">
+                浏览号卡产品、在线下单、分享赚取佣金
+              </p>
+              <div className="flex items-center text-cyan-400 group-hover:text-cyan-300 transition-colors">
+                <span className="font-medium text-sm">进入商城</span>
+                <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
+              </div>
+            </div>
+          </a>
+
           {/* Admin Portal */}
           <a
             href="/portal/admin"
