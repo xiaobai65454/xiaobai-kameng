@@ -85,7 +85,7 @@ export default function AgentProductsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F0F5FF] pb-20">
+    <div>
       {/* 顶部筛选区 */}
       <div className="bg-white sticky top-0 z-10 border-b border-gray-200">
         {/* 运营商 Tab */}
@@ -233,29 +233,6 @@ export default function AgentProductsPage() {
         )}
       </div>
 
-      {/* 底部 Tab 栏 */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-2 py-2 flex justify-around items-center z-50">
-        <a href="/agent" className="flex flex-col items-center gap-1 px-3 py-1">
-          <Wallet className="w-5 h-5 text-gray-400" />
-          <span className="text-xs text-gray-400">首页</span>
-        </a>
-        <a href="/agent/orders" className="flex flex-col items-center gap-1 px-3 py-1">
-          <FileText className="w-5 h-5 text-gray-400" />
-          <span className="text-xs text-gray-400">订单</span>
-        </a>
-        <a href="/agent/products" className="flex flex-col items-center gap-1 px-3 py-1">
-          <ShoppingCart className="w-5 h-5 text-[#1677FF]" />
-          <span className="text-xs text-[#1677FF] font-medium">商品</span>
-        </a>
-        <a href="/agent/team" className="flex flex-col items-center gap-1 px-3 py-1">
-          <Users className="w-5 h-5 text-gray-400" />
-          <span className="text-xs text-gray-400">代理</span>
-        </a>
-        <a href="/agent/profile" className="flex flex-col items-center gap-1 px-3 py-1">
-          <UserCircle className="w-5 h-5 text-gray-400" />
-          <span className="text-xs text-gray-400">我的</span>
-        </a>
-      </div>
     </div>
   );
 }
