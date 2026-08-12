@@ -12,16 +12,20 @@ export default function AgentLoginPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const { login, isAuthenticated, isAdmin } = useAuth();
+  const { login, isAuthenticated, isAdmin, isLoading, profile } = useAuth();
   const { isReady } = useSupabaseConfig();
 
   useEffect(() => {
-    if (isAuthenticated && !isAdmin) {
-      router.push('/agent');
-    } else if (isAuthenticated && isAdmin) {
+    // 等待 profile 完全加载后再决定跳转，避免竞态条件
+    if (isLoading || !profile) return;
+    if (isAdmin) {
       router.push('/portal/admin');
+    } else if (profile.role === 'channel') {
+      router.push('/portal/channel');
+    } else {
+      router.push('/agent');
     }
-  }, [isAuthenticated, isAdmin, router]);
+  }, [isLoading, isAdmin, profile, router]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -37,6 +41,9 @@ export default function AgentLoginPage() {
       } else if (profile?.role === 'admin') {
         // 管理员用户，跳转到管理登录页
         router.push('/portal/admin');
+      } else if (profile?.role === 'channel') {
+        // 渠道方用户，跳转到渠道登录页
+        router.push('/portal/channel');
       } else if (profile) {
         router.push('/agent');
       }
