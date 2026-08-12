@@ -117,7 +117,7 @@ export default function ChannelOrders() {
         <CardContent>
           {loading ? (
             <div className="flex items-center justify-center py-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#1677FF]"></div>
             </div>
           ) : filteredOrders.length === 0 ? (
             <div className="text-center py-8 text-gray-500">暂无订单数据</div>
