@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  haoka-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: haoka-kameng
+    restart: always
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - HOSTNAME=0.0.0.0
+    networks:
+      - haoka-network
+
+networks:
+  haoka-network:
+    driver: bridge
