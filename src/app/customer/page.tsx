@@ -226,15 +226,15 @@ function CustomerPageInner() {
 
   // Actions
   const handleOrder = (product: typeof parsedProducts[0]) => {
-    const params = new URLSearchParams({ productId: product.id });
+    const params = new URLSearchParams();
     if (refCode) params.set('ref', refCode);
-    router.push(`/customer/order?${params.toString()}`);
+    router.push(`/customer/product/${product.id}?${params.toString()}`);
   };
 
   const handleShare = (product: typeof parsedProducts[0]) => {
-    const params = new URLSearchParams({ productId: product.id });
+    const params = new URLSearchParams();
     if (refCode) params.set('ref', refCode);
-    const link = `${window.location.origin}/customer/order?${params.toString()}`;
+    const link = `${window.location.origin}/customer/product/${product.id}?${params.toString()}`;
     if (navigator.clipboard) {
       navigator.clipboard.writeText(link).then(() => {
         toast({ title: '分享链接已复制', description: '快去分享给好友吧' });
