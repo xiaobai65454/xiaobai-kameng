@@ -65,20 +65,42 @@ export const products = pgTable(
     operator: varchar("operator", { length: 20 }).notNull().default("mobile"),
     // 月租价格
     monthly_rent: numeric("monthly_rent", { precision: 10, scale: 2 }).notNull().default("0"),
+    // 原套餐月租（划线价）
+    original_rent: numeric("original_rent", { precision: 10, scale: 2 }).notNull().default("0"),
     // 通用流量（GB）
     general_data: integer("general_data").notNull().default(0),
     // 定向流量（GB）
     directed_data: integer("directed_data").notNull().default(0),
     // 通话时长（分钟）
     call_minutes: integer("call_minutes").notNull().default(0),
+    // 短信数量（条/月）
+    sms_count: integer("sms_count").notNull().default(0),
     // 有效期（月）
     validity_months: integer("validity_months").notNull().default(12),
+    // 合约期（月，0=无合约）
+    contract_months: integer("contract_months").notNull().default(0),
+    // 首充金额（激活当月需充值）
+    first_charge_amount: numeric("first_charge_amount", { precision: 10, scale: 2 }).notNull().default("0"),
+    // 套餐外流量计费（元/GB）
+    extra_data_price: numeric("extra_data_price", { precision: 10, scale: 2 }).notNull().default("0"),
+    // 套餐外通话计费（元/分钟）
+    extra_call_price: numeric("extra_call_price", { precision: 10, scale: 2 }).notNull().default("0"),
     // 佣金金额
     commission_amount: numeric("commission_amount", { precision: 10, scale: 2 }).notNull().default("0"),
     // 年龄限制
     age_limit: varchar("age_limit", { length: 50 }),
     // 地区限制
     area_limit: text("area_limit"),
+    // 发货范围（如"发全国"）
+    delivery_scope: varchar("delivery_scope", { length: 100 }),
+    // 资费介绍（长文本）
+    package_detail: text("package_detail"),
+    // 下单须知（长文本）
+    notice: text("notice"),
+    // 激活方式
+    activation_type: varchar("activation_type", { length: 255 }),
+    // 是否参与首月免租活动
+    first_month_free: boolean("first_month_free").notNull().default(false),
     // 状态：active/inactive
     status: varchar("status", { length: 20 }).notNull().default("active"),
     // 排序
@@ -114,6 +136,13 @@ export const orders = pgTable(
     customer_phone: varchar("customer_phone", { length: 20 }),
     customer_id_card: varchar("customer_id_card", { length: 30 }),
     customer_address: text("customer_address"),
+    // 实名认证材料（4张图片）
+    id_card_front_url: varchar("id_card_front_url", { length: 500 }),
+    id_card_back_url: varchar("id_card_back_url", { length: 500 }),
+    portrait_url: varchar("portrait_url", { length: 500 }),
+    yztc_screenshot_url: varchar("yztc_screenshot_url", { length: 500 }),
+    // 提交IP（风控审计）
+    submit_ip: varchar("submit_ip", { length: 50 }),
     // 选号
     selected_number: varchar("selected_number", { length: 30 }),
     // 号卡信息
@@ -151,6 +180,8 @@ export const orders = pgTable(
     index("orders_status_idx").on(table.status),
     index("orders_source_idx").on(table.source),
     index("orders_created_at_idx").on(table.created_at),
+    index("orders_customer_id_card_idx").on(table.customer_id_card),
+    index("orders_status_created_idx").on(table.status, table.created_at),
   ]
 );
 
