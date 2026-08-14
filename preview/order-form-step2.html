@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>填写订单信息 - UI预览</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+  <style>
+    /* ===== Reset & Base ===== */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --primary: #FF5800;
+      --primary-dark: #E64A00;
+      --primary-light: #FFF1E5;
+      --primary-soft: rgba(255, 88, 0, 0.08);
+      --purple: #5B21B6;
+      --purple-light: #7C3AED;
+      --purple-dark: #4C1D95;
+      --purple-grad: linear-gradient(135deg, #4C1D95 0%, #7C3AED 50%, #5B21B6 100%);
+      --danger: #F5222D;
+      --success: #52c41a;
+      --warning: #fa8c16;
+      --blue: #3C85ED;
+      --blue-light: #3684F9;
+      --bg: #F5F5F5;
+      --card-bg: #ffffff;
+      --border: #EDEDED;
+      --text: rgba(0, 0, 0, 0.9);
+      --text-secondary: #666;
+      --text-tertiary: #999;
+      --radius: 8px;
+      --radius-sm: 4px;
+      --shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      font-size: 14px;
+    }
+
+    .page-wrapper {
+      min-height: 100vh;
+      background: var(--bg);
+      display: flex;
+      justify-content: center;
+    }
+    .phone-frame {
+      width: 100%;
+      max-width: 430px;
+      background: var(--bg);
+      min-height: 100vh;
+      position: relative;
+      padding-bottom: 120px;
+    }
+
+    /* ===== Top Nav (sticky) ===== */
+    .top-nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: #fff;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .top-nav .back-btn {
+      width: 32px; height: 32px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 50%;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      font-size: 20px;
+      color: var(--text);
+    }
+    .top-nav .back-btn:hover { background: #f3f4f6; }
+    .top-nav .title {
+      font-size: 17px;
+      font-weight: 700;
+      flex: 1;
+    }
+    .top-nav .step-badge {
+      font-size: 11px;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-weight: 600;
+    }
+
+    /* ===== Progress Steps ===== */
+    .progress-steps {
+      display: flex;
+      align-items: center;
+      padding: 14px 20px;
+      background: #fff;
+      border-bottom: 1px solid var(--border);
+    }
+    .progress-step {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--text-tertiary);
+    }
+    .progress-step.done { color: var(--primary); }
+    .progress-step.active { color: var(--text); font-weight: 600; }
+    .progress-dot {
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      background: #e5e5e5;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px;
+      color: white;
+      font-weight: 700;
+    }
+    .progress-step.done .progress-dot { background: var(--primary); }
+    .progress-step.active .progress-dot { background: var(--primary); }
+    .progress-line {
+      flex: 1;
+      height: 2px;
+      background: #e5e5e5;
+      margin: 0 10px;
+    }
+    .progress-line.done { background: var(--primary); }
+
+    /* ===== Package Summary Card (Purple gradient) ===== */
+    .package-summary {
+      background: var(--purple-grad);
+      margin: 12px;
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+    }
+    .package-summary::before {
+      content: '';
+      position: absolute;
+      top: -40%;
+      right: -10%;
+      width: 160px; height: 160px;
+      background: radial-gradient(circle, rgba(255,255,255,0.12) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+    .package-info { position: relative; z-index: 1; }
+    .package-name {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .package-name .g-tag {
+      background: rgba(255,255,255,0.2);
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 600;
+    }
+    .package-spec {
+      font-size: 12px;
+      color: rgba(255,255,255,0.8);
+    }
+    .package-price {
+      text-align: right;
+      position: relative;
+      z-index: 1;
+    }
+    .package-price .p-currency {
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .package-price .p-amount {
+      font-size: 26px;
+      font-weight: 900;
+    }
+    .package-price .p-unit {
+      font-size: 11px;
+      color: rgba(255,255,255,0.7);
+    }
+
+    /* ===== Form Section Card ===== */
+    .form-card {
+      background: var(--card-bg);
+      margin: 0 12px 12px;
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: var(--shadow);
+    }
+    .form-card-header {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 14px;
+      font-size: 15px;
+      font-weight: 700;
+    }
+    .form-card-header .num-badge {
+      width: 20px; height: 20px;
+      background: var(--primary);
+      color: white;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .form-card-header .required-tip {
+      font-size: 11px;
+      color: var(--text-tertiary);
+      font-weight: 400;
+      margin-left: auto;
+    }
+
+    /* ===== Form Fields ===== */
+    .form-field {
+      margin-bottom: 14px;
+    }
+    .form-field:last-child { margin-bottom: 0; }
+    .form-field label {
+      display: block;
+      font-size: 13px;
+      color: var(--text);
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+    .form-field label .required {
+      color: var(--danger);
+      margin-left: 2px;
+    }
+    .form-input {
+      width: 100%;
+      padding: 11px 12px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 14px;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.2s;
+      background: #fff;
+    }
+    .form-input:focus {
+      border-color: var(--primary);
+    }
+    .form-input::placeholder {
+      color: var(--text-tertiary);
+    }
+    .form-input.error {
+      border-color: var(--danger);
+    }
+    .form-input.error:focus {
+      border-color: var(--danger);
+    }
+    textarea.form-input {
+      resize: none;
+      min-height: 70px;
+      line-height: 1.6;
+    }
+    .field-error {
+      display: none;
+      font-size: 11px;
+      color: var(--danger);
+      margin-top: 4px;
+    }
+    .field-error.show { display: block; }
+
+    /* ===== Photo Upload ===== */
+    .upload-grid {
+      display: grid;
+      gap: 10px;
+    }
+    .upload-grid.two-col {
+      grid-template-columns: 1fr 1fr;
+    }
+    .upload-box {
+      position: relative;
+      border: 1.5px dashed #d0d0d0;
+      border-radius: 6px;
+      background: #fafafa;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .upload-box:hover {
+      border-color: var(--primary);
+      background: var(--primary-soft);
+    }
+    .upload-box.ratio-id {
+      aspect-ratio: 1.585 / 1;
+    }
+    .upload-box.ratio-portrait {
+      aspect-ratio: 3 / 4;
+    }
+    .upload-box .upload-icon {
+      font-size: 26px;
+      color: var(--text-tertiary);
+      margin-bottom: 6px;
+    }
+    .upload-box .upload-text {
+      font-size: 12px;
+      color: var(--text-tertiary);
+    }
+    .upload-box .upload-sub {
+      font-size: 10px;
+      color: #bbb;
+      margin-top: 2px;
+    }
+    .upload-box.has-image {
+      border-style: solid;
+      border-color: var(--success);
+    }
+    .upload-box img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .upload-box .upload-success-badge {
+      position: absolute;
+      top: 6px; right: 6px;
+      background: var(--success);
+      color: white;
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px;
+      z-index: 2;
+    }
+    .upload-box .upload-delete {
+      position: absolute;
+      bottom: 6px; right: 6px;
+      background: rgba(0,0,0,0.55);
+      color: white;
+      border: none;
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px;
+      cursor: pointer;
+      z-index: 2;
+    }
+    .upload-box input[type="file"] {
+      display: none;
+    }
+    .upload-box .upload-corner {
+      position: absolute;
+      top: 8px; left: 8px;
+      font-size: 10px;
+      color: var(--text-tertiary);
+      z-index: 2;
+      background: rgba(255,255,255,0.8);
+      padding: 1px 6px;
+      border-radius: 3px;
+    }
+
+    /* ===== 一证通查 入口条 ===== */
+    .yztc-entry {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--primary-light);
+      border: 1px solid rgba(255, 88, 0, 0.2);
+      border-radius: 6px;
+      padding: 10px 12px;
+      margin-bottom: 14px;
+      cursor: pointer;
+    }
+    .yztc-entry .icon {
+      font-size: 18px;
+      color: var(--primary);
+    }
+    .yztc-entry .text {
+      flex: 1;
+      font-size: 12px;
+      color: var(--text);
+    }
+    .yztc-entry .text strong {
+      color: var(--primary);
+    }
+    .yztc-entry .arrow {
+      font-size: 14px;
+      color: var(--primary);
+    }
+
+    /* ===== Agreement Checkbox ===== */
+    .agreement {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      margin: 0 12px 12px;
+      padding: 12px 16px;
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      cursor: pointer;
+    }
+    .agreement .checkbox {
+      width: 18px; height: 18px;
+      border: 1.5px solid #ccc;
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 1px;
+      display: flex; align-items: center; justify-content: center;
+      color: white;
+      font-size: 12px;
+      transition: all 0.2s;
+    }
+    .agreement .checkbox.checked {
+      background: var(--primary);
+      border-color: var(--primary);
+    }
+    .agreement .agreement-text {
+      font-size: 12px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+    .agreement .agreement-text a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    /* ===== Bottom Submit Bar ===== */
+    .bottom-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      max-width: 430px;
+      margin: 0 auto;
+      background: #fff;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 10px 16px;
+      gap: 12px;
+      z-index: 100;
+    }
+    .bottom-bar .total-price {
+      display: flex;
+      flex-direction: column;
+    }
+    .bottom-bar .total-label {
+      font-size: 11px;
+      color: var(--text-tertiary);
+    }
+    .bottom-bar .total-value {
+      font-size: 20px;
+      font-weight: 900;
+      color: var(--primary);
+    }
+    .bottom-bar .total-value .currency {
+      font-size: 14px;
+    }
+    .bottom-bar .submit-btn {
+      flex: 1;
+      background: linear-gradient(90deg, #FF5800, #FF7A00);
+      color: white;
+      border: none;
+      border-radius: 22px;
+      padding: 14px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      box-shadow: 0 4px 12px rgba(255, 88, 0, 0.35);
+    }
+    .bottom-bar .submit-btn:active {
+      transform: scale(0.98);
+    }
+    .bottom-bar .submit-btn.disabled {
+      background: #ccc;
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+
+    /* ===== Success Modal ===== */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .modal-overlay.show { display: flex; }
+    .modal-content {
+      background: #fff;
+      border-radius: 12px;
+      padding: 28px 24px;
+      width: 100%;
+      max-width: 340px;
+      text-align: center;
+    }
+    .modal-content .success-icon {
+      width: 60px; height: 60px;
+      background: var(--success);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 30px;
+      color: white;
+      margin: 0 auto 16px;
+    }
+    .modal-content .success-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .modal-content .success-desc {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      margin-bottom: 20px;
+    }
+    .modal-content .success-btn {
+      width: 100%;
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 13px;
+      border-radius: 22px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    /* ===== Toast ===== */
+    .toast {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(0,0,0,0.85);
+      color: white;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      z-index: 2000;
+      display: none;
+      max-width: 80%;
+      text-align: center;
+    }
+    .toast.show { display: block; }
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+    <div class="phone-frame">
+
+      <!-- ===== Top Nav ===== -->
+      <div class="top-nav">
+        <button class="back-btn" onclick="goBack()">
+          <i class="bi bi-chevron-left"></i>
+        </button>
+        <span class="title">填写订单信息</span>
+        <span class="step-badge">步骤 2/2</span>
+      </div>
+
+      <!-- ===== Progress Steps ===== -->
+      <div class="progress-steps">
+        <div class="progress-step done">
+          <div class="progress-dot">1</div>
+          <span>确认套餐</span>
+        </div>
+        <div class="progress-line done"></div>
+        <div class="progress-step active">
+          <div class="progress-dot">2</div>
+          <span>填写信息</span>
+        </div>
+      </div>
+
+      <!-- ===== Package Summary Card ===== -->
+      <div class="package-summary">
+        <div class="package-info">
+          <div class="package-name">
+            <span class="g-tag">5G</span> 广电奔马卡
+          </div>
+          <div class="package-spec">60G通用流量 · 39元/月 · 发全国</div>
+        </div>
+        <div class="package-price">
+          <span class="p-currency">¥</span><span class="p-amount">39</span>
+          <div class="p-unit">/月</div>
+        </div>
+      </div>
+
+      <!-- ===== 收货人信息 ===== -->
+      <div class="form-card">
+        <div class="form-card-header">
+          <span class="num-badge">1</span>
+          收货人信息
+          <span class="required-tip">全部必填</span>
+        </div>
+
+        <div class="form-field">
+          <label>姓名<span class="required">*</span></label>
+          <input type="text" class="form-input" id="name" placeholder="请填写收货人真实姓名" maxlength="20" />
+          <div class="field-error" id="name-error">请输入收货人姓名</div>
+        </div>
+
+        <div class="form-field">
+          <label>身份证号码<span class="required">*</span></label>
+          <input type="text" class="form-input" id="idcard" placeholder="请填写18位身份证号码" maxlength="18" />
+          <div class="field-error" id="idcard-error">请输入正确的18位身份证号码</div>
+        </div>
+
+        <div class="form-field">
+          <label>收货电话<span class="required">*</span></label>
+          <input type="tel" class="form-input" id="phone" placeholder="请填写11位手机号码" maxlength="11" />
+          <div class="field-error" id="phone-error">请输入正确的11位手机号码</div>
+        </div>
+
+        <div class="form-field">
+          <label>收货地址<span class="required">*</span></label>
+          <textarea class="form-input" id="address" placeholder="请填写省市区及详细收货地址"></textarea>
+          <div class="field-error" id="address-error">请输入详细收货地址</div>
+        </div>
+      </div>
+
+      <!-- ===== 身份证照片 ===== -->
+      <div class="form-card">
+        <div class="form-card-header">
+          <span class="num-badge">2</span>
+          身份证照片
+          <span class="required-tip">用于实名认证</span>
+        </div>
+
+        <div class="upload-grid two-col">
+          <div class="upload-box ratio-id" onclick="document.getElementById('id-front').click()" id="id-front-box">
+            <input type="file" id="id-front" accept="image/*" onchange="handleUpload(this, 'id-front-box')" />
+            <span class="upload-corner">正面</span>
+            <i class="bi bi-camera upload-icon"></i>
+            <span class="upload-text">上传身份证正面</span>
+            <span class="upload-sub">点击拍摄或选择</span>
+          </div>
+          <div class="upload-box ratio-id" onclick="document.getElementById('id-back').click()" id="id-back-box">
+            <input type="file" id="id-back" accept="image/*" onchange="handleUpload(this, 'id-back-box')" />
+            <span class="upload-corner">反面</span>
+            <i class="bi bi-camera upload-icon"></i>
+            <span class="upload-text">上传身份证反面</span>
+            <span class="upload-sub">点击拍摄或选择</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 人像与验证截图 ===== -->
+      <div class="form-card">
+        <div class="form-card-header">
+          <span class="num-badge">3</span>
+          人像与验证截图
+          <span class="required-tip">全部必填</span>
+        </div>
+
+        <!-- 一证通查入口 -->
+        <div class="yztc-entry" onclick="showToast('跳转工信部一证通查')">
+          <i class="bi bi-shield-check icon"></i>
+          <span class="text">
+            先完成 <strong>一证通查</strong> 查询，再上传截图
+          </span>
+          <i class="bi bi-chevron-right arrow"></i>
+        </div>
+
+        <div class="upload-grid two-col">
+          <div class="upload-box ratio-portrait" onclick="document.getElementById('portrait').click()" id="portrait-box">
+            <input type="file" id="portrait" accept="image/*" onchange="handleUpload(this, 'portrait-box')" />
+            <span class="upload-corner">半身照</span>
+            <i class="bi bi-person-bounding-box upload-icon"></i>
+            <span class="upload-text">上传半身人像照</span>
+            <span class="upload-sub">清晰正面照</span>
+          </div>
+          <div class="upload-box ratio-portrait" onclick="document.getElementById('yztc').click()" id="yztc-box">
+            <input type="file" id="yztc" accept="image/*" onchange="handleUpload(this, 'yztc-box')" />
+            <span class="upload-corner">一证通查</span>
+            <i class="bi bi-clipboard-check upload-icon"></i>
+            <span class="upload-text">上传一证通查截图</span>
+            <span class="upload-sub">查询结果截图</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== Agreement ===== -->
+      <div class="agreement" onclick="toggleAgreement()">
+        <div class="checkbox" id="agreement-checkbox">
+          <i class="bi bi-check-lg"></i>
+        </div>
+        <div class="agreement-text">
+          我已阅读并同意 <a href="javascript:void(0)" onclick="event.stopPropagation();showToast('查看协议')">《号卡办理协议》</a>，
+          本人承诺所填信息真实有效，且该号卡仅供本人使用，不转卖、不租借，不用于任何违法犯罪活动。
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===== Bottom Submit Bar ===== -->
+  <div class="bottom-bar">
+    <div class="total-price">
+      <span class="total-label">月租</span>
+      <span class="total-value"><span class="currency">¥</span>39</span>
+    </div>
+    <button class="submit-btn" id="submit-btn" onclick="submitOrder()">
+      <i class="bi bi-bag-check-fill"></i>
+      提交订单
+    </button>
+  </div>
+
+  <!-- ===== Success Modal ===== -->
+  <div class="modal-overlay" id="successModal">
+    <div class="modal-content">
+      <div class="success-icon">
+        <i class="bi bi-check-lg"></i>
+      </div>
+      <div class="success-title">订单提交成功！</div>
+      <div class="success-desc">
+        我们将在1-3个工作日内审核您的资料，<br>
+        审核通过后为您寄出号卡，请留意短信通知。
+      </div>
+      <button class="success-btn" onclick="closeSuccess()">查看订单</button>
+    </div>
+  </div>
+
+  <!-- ===== Toast ===== -->
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // ===== Photo Upload Handler =====
+    function handleUpload(input, boxId) {
+      const file = input.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const box = document.getElementById(boxId);
+        // Clear existing content
+        box.innerHTML = '';
+        box.classList.add('has-image');
+        // Add image
+        const img = document.createElement('img');
+        img.src = e.target.result;
+        box.appendChild(img);
+        // Add success badge
+        const badge = document.createElement('div');
+        badge.className = 'upload-success-badge';
+        badge.innerHTML = '<i class="bi bi-check-lg"></i>';
+        box.appendChild(badge);
+        // Add delete button
+        const del = document.createElement('button');
+        del.className = 'upload-delete';
+        del.innerHTML = '<i class="bi bi-trash3"></i>';
+        del.onclick = function(event) {
+          event.stopPropagation();
+          resetUpload(boxId);
+        };
+        box.appendChild(del);
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function resetUpload(boxId) {
+      const box = document.getElementById(boxId);
+      box.classList.remove('has-image');
+      box.innerHTML = `
+        <input type="file" id="${boxId.replace('-box', '')}" accept="image/*" onchange="handleUpload(this, '${boxId}')" />
+        <span class="upload-corner">${boxId === 'id-front-box' ? '正面' : boxId === 'id-back-box' ? '反面' : boxId === 'portrait-box' ? '半身照' : '一证通查'}</span>
+        <i class="bi bi-camera upload-icon"></i>
+        <span class="upload-text">${boxId === 'id-front-box' ? '上传身份证正面' : boxId === 'id-back-box' ? '上传身份证反面' : boxId === 'portrait-box' ? '上传半身人像照' : '上传一证通查截图'}</span>
+        <span class="upload-sub">点击拍摄或选择</span>
+      `;
+    }
+
+    // ===== Agreement Toggle =====
+    let agreementChecked = false;
+    function toggleAgreement() {
+      agreementChecked = !agreementChecked;
+      const checkbox = document.getElementById('agreement-checkbox');
+      if (agreementChecked) {
+        checkbox.classList.add('checked');
+      } else {
+        checkbox.classList.remove('checked');
+      }
+    }
+
+    // ===== Form Validation & Submit =====
+    function submitOrder() {
+      const name = document.getElementById('name').value.trim();
+      const idcard = document.getElementById('idcard').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const address = document.getElementById('address').value.trim();
+
+      let valid = true;
+
+      // Validate name
+      if (!name) {
+        showError('name');
+        valid = false;
+      } else {
+        hideError('name');
+      }
+
+      // Validate ID card number (18位，前17位数字，最后一位数字或X)
+      if (!/^\d{17}[\dXx]$/.test(idcard)) {
+        showError('idcard');
+        valid = false;
+      } else {
+        hideError('idcard');
+      }
+
+      // Validate phone
+      if (!/^1[3-9]\d{9}$/.test(phone)) {
+        showError('phone');
+        valid = false;
+      } else {
+        hideError('phone');
+      }
+
+      // Validate address
+      if (!address || address.length < 5) {
+        showError('address');
+        valid = false;
+      } else {
+        hideError('address');
+      }
+
+      // Validate photos
+      const requiredPhotos = ['id-front-box', 'id-back-box', 'portrait-box', 'yztc-box'];
+      let missingPhotos = [];
+      requiredPhotos.forEach(boxId => {
+        if (!document.getElementById(boxId).classList.contains('has-image')) {
+          missingPhotos.push(boxId);
+        }
+      });
+      if (missingPhotos.length > 0) {
+        showToast('请上传全部4张照片：身份证正反面、半身照、一证通查截图');
+        valid = false;
+      }
+
+      // Validate agreement
+      if (!agreementChecked) {
+        showToast('请先阅读并同意《号卡办理协议》');
+        valid = false;
+      }
+
+      if (!valid) return;
+
+      // All valid, show success modal
+      document.getElementById('successModal').classList.add('show');
+    }
+
+    function showError(fieldId) {
+      document.getElementById(fieldId).classList.add('error');
+      document.getElementById(fieldId + '-error').classList.add('show');
+    }
+    function hideError(fieldId) {
+      document.getElementById(fieldId).classList.remove('error');
+      document.getElementById(fieldId + '-error').classList.remove('show');
+    }
+
+    function closeSuccess() {
+      document.getElementById('successModal').classList.remove('show');
+      showToast('跳转订单列表');
+    }
+
+    function goBack() {
+      location.href = 'order-submit-preview.html';
+    }
+
+    // ===== Toast =====
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 1800);
+    }
+
+    // Live input validation (clear error on input)
+    document.getElementById('name').addEventListener('input', function() {
+      if (this.value.trim()) hideError('name');
+    });
+    document.getElementById('idcard').addEventListener('input', function() {
+      // 只保留数字和字母，字母转大写
+      this.value = this.value.replace(/[^\dXx]/g, '').toUpperCase();
+      if (/^\d{17}[\dX]$/.test(this.value)) hideError('idcard');
+    });
+    document.getElementById('phone').addEventListener('input', function() {
+      this.value = this.value.replace(/[^\d]/g, '');
+      if (/^1[3-9]\d{9}$/.test(this.value)) hideError('phone');
+    });
+    document.getElementById('address').addEventListener('input', function() {
+      if (this.value.trim().length >= 5) hideError('address');
+    });
+  </script>
+</body>
+</html>
