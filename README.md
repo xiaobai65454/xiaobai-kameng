@@ -48,6 +48,11 @@ server/
 ├── index.ts                 # 自定义服务器入口
 ├── tsconfig.json           # Server TypeScript 配置
 └── dist/                    # 编译输出目录（自动生成）
+
+## 核心业务文档
+
+- [订单提交流程后端接口文档](./docs/order-submit-api.md) — 订单提交两步流程（商品详情页 → 填写信息页）的接口定义、请求/响应格式、数据库模型变更与 UI 对应关系
+- [部署指南](./DEPLOY.md) — PM2 / Docker / 宝塔面板三种部署方案
 ```
 
 ## 核心开发规范
