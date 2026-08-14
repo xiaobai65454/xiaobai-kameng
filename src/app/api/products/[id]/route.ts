@@ -21,9 +21,12 @@ function transformProduct(dbProduct: Record<string, unknown>): Record<string, un
  */
 function transformToDatabase(frontendData: Record<string, unknown>): Record<string, unknown> {
   const allowedFields = [
-    'name', 'description', 'operator', 'monthly_rent',
-    'general_data', 'directed_data', 'call_minutes', 'validity_months',
-    'commission_amount', 'age_limit', 'area_limit',
+    'name', 'description', 'operator', 'monthly_rent', 'original_rent',
+    'general_data', 'directed_data', 'call_minutes', 'sms_count',
+    'validity_months', 'contract_months', 'first_charge_amount',
+    'extra_data_price', 'extra_call_price', 'commission_amount',
+    'age_limit', 'area_limit', 'delivery_scope', 'package_detail',
+    'notice', 'activation_type', 'first_month_free',
     'status', 'sort_order', 'tags', 'image_url', 'promo_url',
   ];
 
