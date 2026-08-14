@@ -17,11 +17,11 @@ import {
 // Profile relations
 export const profilesRelations = relations(profiles, ({ one, many }) => ({
   level: one(agentLevels, {
-    fields: [profiles.levelId],
+    fields: [profiles.level_id],
     references: [agentLevels.id],
   }),
   parent: one(profiles, {
-    fields: [profiles.parentId],
+    fields: [profiles.parent_id],
     references: [profiles.id],
     relationName: "profile_parent",
   }),
@@ -45,11 +45,11 @@ export const productsRelations = relations(products, ({ many }) => ({
 // Orders relations
 export const ordersRelations = relations(orders, ({ one, many }) => ({
   agent: one(profiles, {
-    fields: [orders.agentId],
+    fields: [orders.agent_id],
     references: [profiles.id],
   }),
   product: one(products, {
-    fields: [orders.productId],
+    fields: [orders.product_id],
     references: [products.id],
   }),
   commissions: many(commissions),
@@ -58,15 +58,15 @@ export const ordersRelations = relations(orders, ({ one, many }) => ({
 // Commissions relations
 export const commissionsRelations = relations(commissions, ({ one }) => ({
   order: one(orders, {
-    fields: [commissions.orderId],
+    fields: [commissions.order_id],
     references: [orders.id],
   }),
   agent: one(profiles, {
-    fields: [commissions.agentId],
+    fields: [commissions.agent_id],
     references: [profiles.id],
   }),
   fromAgent: one(profiles, {
-    fields: [commissions.fromAgentId],
+    fields: [commissions.from_agent_id],
     references: [profiles.id],
   }),
 }));
@@ -74,7 +74,7 @@ export const commissionsRelations = relations(commissions, ({ one }) => ({
 // Withdrawals relations
 export const withdrawalsRelations = relations(withdrawals, ({ one }) => ({
   agent: one(profiles, {
-    fields: [withdrawals.agentId],
+    fields: [withdrawals.agent_id],
     references: [profiles.id],
   }),
 }));
@@ -82,7 +82,7 @@ export const withdrawalsRelations = relations(withdrawals, ({ one }) => ({
 // Messages relations
 export const messagesRelations = relations(messages, ({ one }) => ({
   user: one(profiles, {
-    fields: [messages.userId],
+    fields: [messages.user_id],
     references: [profiles.id],
   }),
 }));
@@ -90,7 +90,7 @@ export const messagesRelations = relations(messages, ({ one }) => ({
 // Lucky numbers relations
 export const luckyNumbersRelations = relations(luckyNumbers, ({ one }) => ({
   reservedBy: one(profiles, {
-    fields: [luckyNumbers.reservedBy],
+    fields: [luckyNumbers.reserved_by],
     references: [profiles.id],
   }),
 }));
@@ -98,7 +98,7 @@ export const luckyNumbersRelations = relations(luckyNumbers, ({ one }) => ({
 // Operation logs relations
 export const operationLogsRelations = relations(operationLogs, ({ one }) => ({
   user: one(profiles, {
-    fields: [operationLogs.userId],
+    fields: [operationLogs.user_id],
     references: [profiles.id],
   }),
 }));
